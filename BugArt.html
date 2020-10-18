@@ -351,10 +351,11 @@
                 ssize = size,
                 rok += .8;
                 var g = aimed ? line + 5 / 2 : line + 5 * Math.cos(rok / 5);
+				g *= times / loadBulTime;
                 if (st += uptt, 
 						uptt += upt, 
 						uptt *= .7, 
-						ctx.strokeStyle = "#000", 
+						ctx.strokeStyle = "#fff", 
 						ctx.beginPath(), 
 						ctx.moveTo(bx, by), 
 						ctx.lineTo(bx + Math.sin(st) * g, by + Math.cos(st) * g), 
@@ -419,9 +420,13 @@
 					}
                 }
 				
-                ctx.fillText("余粮 " + space + "担", 15, 125);
+                ctx.fillText("命脉 " + space + "股", 15, 125);
+				
 				if (times == loadBulTime) ctx.fillStyle = "#ff3465";
-				ctx.fillText("装填 " + times + "/" + loadBulTime + "火药", 15, 170);
+				else ctx.fillStyle = "#000000";
+				ctx.fillText("装填 " + parseInt(times / loadBulTime * 100) + "/100%", 15, 215);
+				ctx.fillStyle = (aimed ? "#6745ff" : "#000000");
+				ctx.fillText("锁定 " + (aimed ? "是" : "否"), 15, 170);
 				ctx.beginPath();
 				ctx.fillStyle = "#121212";
 				ctx.arc(bx, by, 12, 0, Math.PI * 2, false);
