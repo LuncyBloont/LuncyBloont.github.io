@@ -50,9 +50,9 @@
 			}
         </style>
     </head>
-    
-    <body onmousemove="mouseM(event.pageX, event.pageY)" 
-		ontouchmove="mouseM(event.touches[0].clientX, event.touches[0].clientY)"
+		<!--onmousemove="mouseM(event.pageX, event.pageY)" -->
+    	<!--ontouchmove="mouseM(event.touches[0].clientX, event.touches[0].clientY)"-->
+    <body 
 		onmousedown="mouseM(event.pageX, event.pageY); fire = true;" 
 		ontouchstart="mouseM(event.touches[0].clientX, event.touches[0].clientY); fire = true;">
         <div class="frame">
@@ -295,7 +295,7 @@
                     ctx.moveTo(guns[i].ox - bulletSpeed * t / s * bulletLength, guns[i].oy - bulletSpeed * e / s * bulletLength),
                     ctx.lineTo(guns[i].ox, guns[i].oy),
                     ctx.lineWidth = 1 + Math.abs(Math.sin(oke) * 6),
-                    ctx.stroke();
+                    ctx.stroke();                                                                                                                                                                                                                                                                                                                                                                                  
 					var hited = false;
 					var jj = 0;
 					for (var jj = 0; jj < size; jj += size / 5) {
@@ -303,7 +303,7 @@
 						o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed,
 						c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed,
 						n = Math.sqrt(Math.pow(o - px[jj], 2) + Math.pow(c - py[jj], 2));
-						if (ssize > n && a < bulletSpeed * bulletLength) {
+						if (ssize * 2 > n && a < bulletSpeed * bulletLength) {
 							hited = true;
 							break;
 						}
@@ -533,7 +533,7 @@
 			
 			var bugHart = 100;
 			var toR = 0;
-			var torSpeed = 0.1;
+			var torSpeed = 0.03;
 			var aimed = true;
         </script>
     </body>
