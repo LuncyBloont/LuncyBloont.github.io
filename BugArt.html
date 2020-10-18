@@ -298,7 +298,7 @@
                     ctx.stroke();
 					var hited = false;
 					var jj = 0;
-					for (var jj = 0; jj < px.length; jj += px.length / 5) {
+					for (var jj = 0; jj < size; jj += size / 5) {
 						var a = Math.sqrt(Math.pow(guns[i].x - px[jj], 2) + Math.pow(guns[i].y - py[jj], 2)),
 						o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed,
 						c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed,
