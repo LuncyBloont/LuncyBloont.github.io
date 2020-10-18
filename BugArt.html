@@ -8,11 +8,46 @@
             巨怪怪
         </title>
         <style>
-            .frame{border:0px #ffffff solid}div{border-width:50px 50px 50px 50px;border-color:grey
-            grey grey grey;border-style:solid solid solid solid}.big{width:0;position:absolute;top:0;left:0}a:hover{color:"#00ffff";width:500px}input{border:1px
-            #c21c1f solid;background-color:#f0efef;color:#454545}button{border:0 #fff solid;background:grey;margin:4%
-            0 4% 0}#bn{border:1px #a4a455 solid;background-color:#232323;color:#e4e455}.cmd{width:100%;height:100%;margin:95%
-            0 75% 0; background: #C21C1F;color: aliceblue;}
+            .frame {
+				border:0px #ffffff solid;
+			}
+			div {
+				border-width:50px 50px 50px 50px;
+				border-color:grey grey grey grey;
+				border-style:solid solid solid solid;
+			}
+			.big {
+				width:0;
+				position:absolute;
+				top:0;
+				left:0;
+			}
+			a:hover {
+				color:"#00ffff";
+				width:500px;
+			}
+			input {
+				border:1px #c21c1f solid;
+				background-color:#f0efef;
+				color:#454545;
+			}
+			button {
+				border:0 #fff solid;
+				background:grey;
+				margin:4% 0 4% 0;
+			}
+			#bn {
+				border:1px #a4a455 solid;
+				background-color:#232323;
+				color:#e4e455;
+			}
+			.cmd {
+				width:100%;
+				height:100%;
+				margin:95% 0 75% 0; 
+				background: #C21C1F;
+				color: aliceblue;
+			}
         </style>
     </head>
     
@@ -62,12 +97,12 @@
 				mouse_y = myy * winWidth / canvas.clientWidth;
 				if (space > 0) {
 					if (mouse_x < bx) {
-						st = Math.PI * 1.5 + Math.atan((-mouse_y + by) / (mouse_x - bx));
+						toR = Math.PI * 1.5 + Math.atan((-mouse_y + by) / (mouse_x - bx));
 					} else {
-						st = Math.PI * 0.5 + Math.atan((-mouse_y + by) / (mouse_x - bx))
+						toR = Math.PI * 0.5 + Math.atan((-mouse_y + by) / (mouse_x - bx))
 					}
 				}
-				sx = bx + 1e4 * Math.sin(st), sy = by + 1e4 * Math.cos(st), st = Math.atan2(sx - bx, sy - by);
+				
 			}
 			function start() {
 				
@@ -138,7 +173,28 @@
                     gx -= (gx - tx) * speed * (1 + s / 500) / s,
                     gy -= (gy - ty) * speed * (1 + s / 500) / s;
                     var a = Math.sqrt(Math.pow(x - tx, 2) + Math.pow(y - ty, 2));
-                    for (ssize + 30 > a && (gsize -= 9.6), Math.random() > .56 && (gx -= (x - gx) * Math.sin(oke) * 2 / e, gy -= (y - gy) * Math.sin(oke) * 2 / e), speed = 5 + ssize / 2, 4 >= gsize && (tx = winWidth / 2 + winWidth / 2 * Math.random(), ty = winHeight * Math.random(), tl = 400 + 400 * Math.random(), gx -= (x - gx) * tl / e, gy -= (y - gy) * tl / e, tcolor = "rgb(" + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + ")", gsize = 0, space > 0 && (size += 2)), speed = (6 + 3 * Math.sin(oke) + ssize / 9) * a / (a + 50), 23 > gsize && (gsize += 9), 3 > size && (size = 3), px[0] = x, py[0] = y, ph[0] = ssize, i = size - 1; i > 0; i--) px[i] = px[i - 1],
+                    for (ssize + 30 > a && (gsize -= 9.6), 
+						Math.random() > .56 && (
+							gx -= (x - gx) * Math.sin(oke) * 2 / e, 
+							gy -= (y - gy) * Math.sin(oke) * 2 / e
+						), 
+						speed = 5 + ssize / 2, 
+						4 >= gsize && (
+							tx = winWidth / 2 + winWidth / 2 * Math.random(), 
+							ty = winHeight * Math.random(), 
+							tl = 400 + 400 * Math.random(), 
+							gx -= (x - gx) * tl / e, 
+							gy -= (y - gy) * tl / e, 
+							tcolor = "rgb(" + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + ")", 
+							gsize = 0, 
+							space > 0 && (size += 2)
+						), 
+						speed = (6 + 3 * Math.sin(oke) + ssize / 9) * a / (a + 50), 23 > gsize && (gsize += 9), 
+						3 > size && (size = 3), 
+						px[0] = x, 
+						py[0] = y, 
+						ph[0] = ssize, 
+						i = size - 1; i > 0; i--) px[i] = px[i - 1],
                     py[i] = py[i - 1],
                     ph[i] = ssize + i / 1.2 * Math.sin(i / size * 5.1);
                     for (i = 0; size > i; i++) ctx.beginPath(),
@@ -203,10 +259,18 @@
                 upt = -.06
             }
             function gun() {
+				if (Math.abs(toR - st) > torSpeed) {
+					st += torSpeed * (toR - st > 0 ? 1 : -1);
+					aimed = false;
+				} else {
+					st = toR;
+					aimed = true;
+				}
+				sx = bx + 1e4 * Math.sin(st), sy = by + 1e4 * Math.cos(st);
                 for (bldid >= 25 && (bldid = 0), 
 						times++, times > loadBulTime && (times = loadBulTime,
 						gi++, gi > ung && (gi = 0),
-						fire && times == loadBulTime && (
+						aimed && fire && times == loadBulTime && (
 						times = 0,
 						guns[gi] = new Object(), 
 						guns[gi].x = bx + Math.sin(st) * line, 
@@ -254,7 +318,13 @@
 						guns[jj].oy = -100;
 						var sub = Math.random() > 0.1;
 						sub && (size -= 1);
-                        for (bldid += 1, ctx.fillStyle = "#ff5621", ctx.globalAlpha = .4, ctx.beginPath(), ctx.arc(guns[i].x, guns[i].y, 4 * ssize, 0, 2 * Math.PI, !0), ctx.lineWidth = (1 + ssize) / 4, ctx.fill(), j = 0; 25 > j; j++) {
+                        for (bldid += 1, 
+								ctx.fillStyle = "#ff5621", 
+								ctx.globalAlpha = .4, 
+								ctx.beginPath(), 
+								ctx.arc(guns[i].x, guns[i].y, 4 * ssize, 0, 2 * Math.PI, !0), 
+								ctx.lineWidth = (1 + ssize) / 4, 
+								ctx.fill(), j = 0; 25 > j; j++) {
                             var l = x + j * Math.sin(j + x / 7.2 * Math.random()) * 9,
                             r = y + j * Math.cos(j - y / 7.2 * Math.random()) * 9;
                             bctx.globalAlpha = .1,
@@ -270,7 +340,9 @@
 						ctx.globalAlpha = 1;
                         for (u = size - 3; size > u; u++) px[u] = -500,
                         py[u] = -2e3;
-                        space > 0 && Math.random() > 0.12 && (gx = winWidth * Math.random(), gy = winHeight * Math.random())
+                        space > 0 && Math.random() > 0.12 && (
+						gx = winWidth * Math.random(), 
+						gy = winHeight * Math.random())
                     }
                 } catch(h) {
                     ctx.strokeText(h, 16, 46)
@@ -278,8 +350,45 @@
 				fire = false;
                 ssize = size,
                 rok += .8;
-                var g = line + 5 * Math.cos(rok);
-                if (st += uptt, uptt += upt, uptt *= .7, ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * g, by + Math.cos(st) * g), ctx.lineWidth = 7, ctx.stroke(), ctx.strokeStyle = "#063", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line2, by + Math.cos(st) * line2), ctx.lineWidth = 10, ctx.stroke(), ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line3, by + Math.cos(st) * line3), ctx.lineWidth = 16, ctx.stroke(), ctx.strokeStyle = "#031", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * (line3 - 2), by + Math.cos(st) * (line3 - 2)), ctx.lineWidth = 34, ctx.stroke(), 0 == times && (ctx.beginPath(), ctx.strokeStyle = "#fff", ctx.moveTo(bx + Math.sin(st) * (g + 30), by + Math.cos(st) * (g + 30)), ctx.lineTo(bx + Math.sin(st) * (g + 3), by + Math.cos(st) * (g + 3)), ctx.lineWidth = 15, fire && ctx.stroke()), ctx.fillStyle = "#ffff00", ctx.fillText("战绩 " + score, 15, 80), ctx.fillStyle = "#ffff00", 0 >= space) {
+                var g = aimed ? line + 5 / 2 : line + 5 * Math.cos(rok / 5);
+                if (st += uptt, 
+						uptt += upt, 
+						uptt *= .7, 
+						ctx.strokeStyle = "#000", 
+						ctx.beginPath(), 
+						ctx.moveTo(bx, by), 
+						ctx.lineTo(bx + Math.sin(st) * g, by + Math.cos(st) * g), 
+						ctx.lineWidth = 7, 
+						ctx.stroke(), 
+						ctx.strokeStyle = "#063", 
+						ctx.beginPath(), 
+						ctx.moveTo(bx, by), 
+						ctx.lineTo(bx + Math.sin(st) * line2, by + Math.cos(st) * line2), 
+						ctx.lineWidth = 10, 
+						ctx.stroke(), 
+						ctx.strokeStyle = aimed ? "#6745ff" : "#000", 
+						ctx.beginPath(), 
+						ctx.moveTo(bx, by), 
+						ctx.lineTo(bx + Math.sin(st) * (line3 + 3), by + Math.cos(st) * (line3 + 3)), 
+						ctx.lineWidth = 16, 
+						ctx.stroke(), 
+						ctx.strokeStyle = "#031", 
+						ctx.beginPath(), 
+						ctx.moveTo(bx, by), 
+						ctx.lineTo(bx + Math.sin(st) * (line3 - 2), by + Math.cos(st) * (line3 - 2)), 
+						ctx.lineWidth = 34, 
+						ctx.stroke(), 
+						0 == times && (
+							ctx.beginPath(), 
+							ctx.strokeStyle = "#fff", 
+							ctx.moveTo(bx + Math.sin(st) * (g + 30), by + Math.cos(st) * (g + 30)), 
+							ctx.lineTo(bx + Math.sin(st) * (g + 3), by + Math.cos(st) * (g + 3)), 
+							ctx.lineWidth = 15, 
+							fire && ctx.stroke()), 
+						ctx.fillStyle = "#ffff00", 
+						ctx.fillText("战绩 " + score, 15, 80), 
+						ctx.fillStyle = "#ffff00", 
+						0 >= space) {
                     space = 0,
                     st = 0;
                     
@@ -325,7 +434,15 @@
             bgc = document.getElementById("bg"),
             bctx = bgc.getContext("2d");
             function loadGame() {
-				for (bctx.shadowOffsetX = 4, bctx.shadowOffsetY = 4, bctx.shadowBlur = 0, bctx.shadowColor = "rgba(0,0,0,0.4)", bctx.strokeStyle = "#8D9A8C", bctx.lineWidth = 2, bctx.fillStyle = "#2E2A3C", bctx.fillRect(0, 0, winWidth, winHeight), bctx.globalAlpha = .1, i = 0; 500 > i; i++) {
+				for (bctx.shadowOffsetX = 4, 
+						bctx.shadowOffsetY = 4, 
+						bctx.shadowBlur = 0, 
+						bctx.shadowColor = "rgba(0,0,0,0.4)", 
+						bctx.strokeStyle = "#8D9A8C", 
+						bctx.lineWidth = 2, 
+						bctx.fillStyle = "#2E2A3C", 
+						bctx.fillRect(0, 0, winWidth, winHeight), 
+						bctx.globalAlpha = .1, i = 0; 500 > i; i++) {
 				    var x1 = winWidth * Math.random(),
 				    y1 = winHeight * Math.random(),
 				    x2 = winWidth * Math.random(),
@@ -410,7 +527,9 @@
 			times = loadBulTime;
 			
 			var bugHart = 100;
-
+			var toR = 0;
+			var torSpeed = 0.1;
+			var aimed = true;
         </script>
     </body>
 
