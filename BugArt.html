@@ -67,6 +67,7 @@
 						st = Math.PI * 0.5 + Math.atan((-mouse_y + by) / (mouse_x - bx))
 					}
 				}
+				sx = bx + 1e4 * Math.sin(st), sy = by + 1e4 * Math.cos(st), st = Math.atan2(sx - bx, sy - by);
 			}
 			function start() {
 				
@@ -278,7 +279,7 @@
                 ssize = size,
                 rok += .8;
                 var g = line + 5 * Math.cos(rok);
-                if (st += uptt, uptt += upt, uptt *= .7, sx = bx + 1e4 * Math.sin(st), sy = by + 1e4 * Math.cos(st), st = Math.atan2(sx - bx, sy - by), ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * g, by + Math.cos(st) * g), ctx.lineWidth = 7, ctx.stroke(), ctx.strokeStyle = "#063", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line2, by + Math.cos(st) * line2), ctx.lineWidth = 10, ctx.stroke(), ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line3, by + Math.cos(st) * line3), ctx.lineWidth = 16, ctx.stroke(), ctx.strokeStyle = "#031", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * (line3 - 2), by + Math.cos(st) * (line3 - 2)), ctx.lineWidth = 34, ctx.stroke(), 0 == times && (ctx.beginPath(), ctx.strokeStyle = "#fff", ctx.moveTo(bx + Math.sin(st) * (g + 30), by + Math.cos(st) * (g + 30)), ctx.lineTo(bx + Math.sin(st) * (g + 3), by + Math.cos(st) * (g + 3)), ctx.lineWidth = 15, fire && ctx.stroke()), ctx.fillStyle = "#ffff00", ctx.fillText("战绩 " + score, 15, 80), ctx.fillStyle = "#ffff00", 0 >= space) {
+                if (st += uptt, uptt += upt, uptt *= .7, ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * g, by + Math.cos(st) * g), ctx.lineWidth = 7, ctx.stroke(), ctx.strokeStyle = "#063", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line2, by + Math.cos(st) * line2), ctx.lineWidth = 10, ctx.stroke(), ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line3, by + Math.cos(st) * line3), ctx.lineWidth = 16, ctx.stroke(), ctx.strokeStyle = "#031", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * (line3 - 2), by + Math.cos(st) * (line3 - 2)), ctx.lineWidth = 34, ctx.stroke(), 0 == times && (ctx.beginPath(), ctx.strokeStyle = "#fff", ctx.moveTo(bx + Math.sin(st) * (g + 30), by + Math.cos(st) * (g + 30)), ctx.lineTo(bx + Math.sin(st) * (g + 3), by + Math.cos(st) * (g + 3)), ctx.lineWidth = 15, fire && ctx.stroke()), ctx.fillStyle = "#ffff00", ctx.fillText("战绩 " + score, 15, 80), ctx.fillStyle = "#ffff00", 0 >= space) {
                     space = 0,
                     st = 0;
                     
