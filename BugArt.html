@@ -212,8 +212,8 @@
 						guns[gi].y = by + Math.cos(st) * line, 
 						guns[gi].ox = bx + Math.sin(st) * line, 
 						guns[gi].oy = by + Math.cos(st) * line, 
-						guns[gi].tx = sx + 2e3 * Math.random() - 1e3, 
-						guns[gi].ty = sy + 2e3 * Math.random() - 1e3), fire = false), 
+						guns[gi].tx = sx + 2e1 * Math.random() - 1e1, 
+						guns[gi].ty = sy + 2e1 * Math.random() - 1e1)), 
 						i = 0; 
 						i < guns.length; i++) try {
                     var t = guns[i].x - guns[i].tx,
@@ -274,6 +274,7 @@
                 } catch(h) {
                     ctx.strokeText(h, 16, 46)
                 }
+				fire = false;
                 ssize = size,
                 rok += .8;
                 var g = line + 5 * Math.cos(rok);
@@ -282,9 +283,9 @@
                     st = 0;
                     
                     tcolor = "#af6c88",
-                    ctx.fillText(name + "，你坚持了" + score + "个时辰。", 280, 60),
-                    ctx.fillText("你" + (score > 35 ? "成功等到了" : "还没有等到") + "援军，", 280, 100);
-					ctx.fillText(score > 35 ? "妖兽也失去了踪迹。" : "两天后援军找到了你的尸体。", 280, 140);
+                    ctx.fillText(name + "，你创造了" + score + "的战绩。", 280, 60),
+                    ctx.fillText("你" + (score > 15 ? "成功等到了" : "还没有等到") + "援军，", 280, 100);
+					ctx.fillText(score > 15 ? "妖兽也失去了踪迹。" : "两天后援军找到了你的尸体。", 280, 140);
 					try {
 						if (!best || best < score) {
 							best = score;
@@ -295,7 +296,7 @@
 					} catch(h) {}
 					if (bestName)
 						ctx.fillText("史料记载，最伟大的统领", 280, 180),
-						ctx.fillText("坚持了" + best + "个时辰，", 280, 220),
+						ctx.fillText("拿下了" + best + "战绩，", 280, 220),
 						ctx.fillText("他叫" + bestName+ "。", 280, 260);
                     ctx.fillText(score >= best ? "你已被载入史册" : "", 280, 300);
 					for (var jj = 0; jj < guns.length; jj += 1) {
@@ -399,12 +400,13 @@
             
 			var helpStr = input.value;
             var times = 0;
-			var bulletSpeed = 18;
+			var bulletSpeed = 8;
 			var goodSize = 24;
 			var fire = false;
 			var bulletLength = 4;
 			var mouse_x = 50, mouse_y = 50;
-			var loadBulTime = 165;
+			var loadBulTime = 45;
+			times = loadBulTime;
 			
 			var bugHart = 100;
 
