@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+        <title>
+            巨怪怪
+        </title>
+        <style>
+            .frame{border:0px #ffffff solid}div{border-width:50px 50px 50px 50px;border-color:grey
+            grey grey grey;border-style:solid solid solid solid}.big{width:0;position:absolute;top:0;left:0}a:hover{color:"#00ffff";width:500px}input{border:1px
+            #c21c1f solid;background-color:#f0efef;color:#454545}button{border:0 #fff solid;background:grey;margin:4%
+            0 4% 0}#bn{border:1px #a4a455 solid;background-color:#232323;color:#e4e455}.cmd{width:100%;height:100%;margin:95%
+            0 75% 0; background: #C21C1F;color: aliceblue;}
+        </style>
+    </head>
+    
+    <body onmousemove="event.preventDefault();mouseM(event.pageX, event.pageY)" 
+		ontouchmove="event.preventDefault();mouseM(event.touches[0].clientX, event.touches[0].clientY)"
+		onmousedown="mouseM(event.pageX, event.pageY); fire = true;" 
+		ontouchstart="mouseM(event.touches[0].clientX, event.touches[0].clientY); fire = true;">
+        <div class="frame">
+            <canvas style="z-index: -2;" id="bg" class="big" width="900" height="400">
+            </canvas>
+            <canvas style="z-index: -1;"id="canvas" class="big" width="900" height="400">
+            </canvas>
+        </div>
+        <br>
+        <input onclick="this.value='';" value="请输入你的姓名, 开始前请确保横屏游戏" id="input" style="width:65%">
+        <button id="bn" onclick="start();run(),this.outerHTML='';">
+            开始
+        </button>
+        <br>
+        <!--<table style="width:100%">
+            <tr>
+                <td>
+                    <button class="cmd" ontouchend="upt=0" onmousedown="lleft(event)" onmouseup="upt=0"
+                    ontouchmove="lleft(event)" ontouchstart="lleft(event)" onmousedown="lleft(event)">
+                        左旋
+                    </button>
+                </td>
+                <td>
+                    <button class="cmd" ontouchend="upt=0" onmousedown="lright(event)" onmouseup="upt=0"
+                    ontouchmove="lright(event)" ontouchstart="lright(event)"onmousedown="lright(event)">
+                        右旋
+                    </button>
+                </td>
+            </tr>
+        </table>-->
+        <script>
+			var winWidth = 900, winHeight = 400;
+			function myFullScreen() {
+				var gameFrame = document.getElementsByClassName("frame")[0];
+				gameFrame.msRequestFullscreen && gameFrame.msRequestFullscreen();
+				gameFrame.mozRequestFullScreen && gameFrame.mozRequestFullScreen();
+				gameFrame.webkitRequestFullScreen && gameFrame.webkitRequestFullScreen();
+				gameFrame.requestFullScreen && gameFrame.requestFullScreen();
+			}
+			function mouseM(mxx, myy) {
+				mouse_x = mxx * winWidth / canvas.clientWidth;
+				mouse_y = myy * winWidth / canvas.clientWidth;
+				if (space > 0) {
+					if (mouse_x < bx) {
+						st = Math.PI * 1.5 + Math.atan((-mouse_y + by) / (mouse_x - bx));
+					} else {
+						st = Math.PI * 0.5 + Math.atan((-mouse_y + by) / (mouse_x - bx))
+					}
+				}
+			}
+			function start() {
+				
+				document.body.onkeydown = function(event) {
+					// alert(event.keyCode);
+					if (event.keyCode == 65) {lleft(event);};
+					if (event.keyCode == 68) {lright(event);};
+				}
+				document.body.onkeyup = function(event) {
+					upt = 0;
+				}
+				document.body.onclick = function() {
+					if (mouse_x > winWidth * 0.9 && mouse_y < winHeight * 0.1)
+						myFullScreen();
+				}
+				canvas.width = winWidth;
+				canvas.height = winHeight;
+				bgc.width = winWidth;
+				bgc.height = winHeight;
+				for (gi = 0; gi < guns.length; gi++) guns[gi] = new Object,
+				guns[gi].x = -100,
+				guns[gi].y = -100,
+				guns[gi].ox = -100,
+				guns[gi].oy = -100,
+				guns[gi].tx = -100,
+				guns[gi].ty = -100;
+				fire = false;
+				// myFullScreen();
+				loadGame();
+				good();
+			}
+            function good() {
+                score += 0.1,
+                space > 0 && setTimeout("good()", 2e3)
+            }
+            function run() {
+                try {
+                    "" != input.value && helpStr != input.value && (name = input.value),
+                    best = localStorage.getItem("bestScore");
+					bestName = localStorage.getItem("bestName");
+                } catch(t) {}
+                if (input.style.position = "absolute", input.style.top = "-80px", 100 > sss) sss += 2,
+                canvas.style.width = sss + "%",
+                bgc.style.width = sss + "%",
+                ctx.fillStyle = "#ffaa00",
+                ctx.beginPath(),
+                ctx.arc(x, y, 30, 0, 2 * Math.PI, !0),
+                ctx.fill(),
+                ctx.fillStyle = "#ffba00";
+                else {
+                    canvas.style.width = "100%",
+                    bgc.style.width = "100%",
+                    ctx.fillStyle = "#aaaaaa",
+                    ctx.clearRect(0, 0, winWidth, winHeight),
+                    ctx.fillStyle = "#900",
+                    ctx.globalAlpha = 1,
+                    ctx.shadowOffsetX = 4,
+                    ctx.shadowOffsetY = 4,
+                    ctx.shadowBlur = 5,
+                    ctx.shadowColor = "rgba(0,0,0,0.4)",
+                    space = parseInt(goodSize * 100 + bugHart * 5 - bugHart * ssize) / 100,
+                    5 > ssize && (ssize = 5),
+                    3 > size && (size = 3);
+                    var e = Math.sqrt(Math.pow(gx - x, 2) + Math.pow(gy - y, 2));
+                    x += (gx - x) * speed / e,
+                    y += (gy - y) * speed / e;
+                    var s = Math.sqrt(Math.pow(gx - tx, 2) + Math.pow(gy - ty, 2));
+                    gx -= (gx - tx) * speed * (1 + s / 500) / s,
+                    gy -= (gy - ty) * speed * (1 + s / 500) / s;
+                    var a = Math.sqrt(Math.pow(x - tx, 2) + Math.pow(y - ty, 2));
+                    for (ssize + 30 > a && (gsize -= 9.6), Math.random() > .56 && (gx -= (x - gx) * Math.sin(oke) * 2 / e, gy -= (y - gy) * Math.sin(oke) * 2 / e), speed = 5 + ssize / 2, 4 >= gsize && (tx = winWidth / 2 + winWidth / 2 * Math.random(), ty = winHeight * Math.random(), tl = 400 + 400 * Math.random(), gx -= (x - gx) * tl / e, gy -= (y - gy) * tl / e, tcolor = "rgb(" + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + ")", gsize = 0, space > 0 && (size += 2)), speed = (6 + 3 * Math.sin(oke) + ssize / 9) * a / (a + 50), 23 > gsize && (gsize += 9), 3 > size && (size = 3), px[0] = x, py[0] = y, ph[0] = ssize, i = size - 1; i > 0; i--) px[i] = px[i - 1],
+                    py[i] = py[i - 1],
+                    ph[i] = ssize + i / 1.2 * Math.sin(i / size * 5.1);
+                    for (i = 0; size > i; i++) ctx.beginPath(),
+                    ctx.arc(px[i], py[i], 1.02 * ph[i] * 1.5, 0, 2 * Math.PI, !0),
+                    ctx.lineWidth = 3,
+                    ctx.strokeStyle = "#000",
+                    ctx.stroke();
+                    for (i = 0; size > i; i++) ctx.shadowOffsetX = 0,
+                    ctx.shadowOffsetY = 0,
+                    ctx.shadowBlur = 0,
+                    ctx.shadowColor = "rgba(0,0,0,0.4)",
+                    ctx.fillStyle = 0 >= space ? tcolor: "#ffb278",
+                    ctx.beginPath(),
+                    ctx.arc(px[i], py[i], 1.5 * ph[i], 0, 2 * Math.PI, !0),
+                    ctx.fill(),
+                    ctx.shadowOffsetX = 4,
+                    ctx.shadowOffsetY = 4,
+                    ctx.shadowBlur = 5,
+                    ctx.shadowColor = "rgba(0,0,0,0.4)";
+                    oke += .2,
+                    ctx.fillStyle = "#000000",
+                    ctx.beginPath(),
+                    ctx.arc(x, y, ssize / 2 + ssize / 2 * Math.sin(oke), 0, 2 * Math.PI, !0),
+                    ctx.fill(),
+                    ctx.fillStyle = tcolor,
+                    ctx.beginPath(),
+                    ctx.arc(tx, ty, 5 + gsize + 5 * Math.cos(oke), 0, 2 * Math.PI, !0),
+                    ctx.fill(),
+                    ctx.lineWidth = 1 - Math.sin(oke),
+                    ctx.stroke(),
+                    ctx.fillStyle = "#ff0000",
+                    ctx.font = 	"27px sans-serif",
+                    ctx.textAlign = "left",
+                    ctx.fillStyle = "#999500",
+                    ctx.fillText("妖🐛兽", x - 40, y - 50),
+                    ctx.strokeText("妖🐛兽", x - 40, y - 50),
+                    gun();
+					
+					var mouseR = 19, mouseCol = "blueviolet", mouseW = 3;
+					if (times == loadBulTime) {
+						mouseR = 24;
+						mouseCol = "#ff3412";
+						mouseW = 5;
+					}
+					ctx.strokeStyle = mouseCol;
+					ctx.lineWidth = mouseW;
+					ctx.beginPath();
+					ctx.arc(mouse_x, mouse_y, mouseR, 0, Math.PI * 2, true);
+					ctx.closePath();
+					ctx.stroke();
+					ctx.fillStyle = "#808080";
+					ctx.fillText("全屏", winWidth * 0.9, winHeight * 0.1);
+                }
+                setTimeout(run, 23)
+            }
+            function lleft(t) {
+                t && t.preventDefault(),
+                upt = .06
+            }
+            function lright(t) {
+                t && t.preventDefault(),
+                upt = -.06
+            }
+            function gun() {
+                for (bldid >= 25 && (bldid = 0), 
+						times++, times > loadBulTime && (times = loadBulTime,
+						gi++, gi > ung && (gi = 0),
+						fire && times == loadBulTime && (
+						times = 0,
+						guns[gi] = new Object(), 
+						guns[gi].x = bx + Math.sin(st) * line, 
+						guns[gi].y = by + Math.cos(st) * line, 
+						guns[gi].ox = bx + Math.sin(st) * line, 
+						guns[gi].oy = by + Math.cos(st) * line, 
+						guns[gi].tx = sx + 2e3 * Math.random() - 1e3, 
+						guns[gi].ty = sy + 2e3 * Math.random() - 1e3), fire = false), 
+						i = 0; 
+						i < guns.length; i++) try {
+                    var t = guns[i].x - guns[i].tx,
+                    e = guns[i].y - guns[i].ty,
+                    s = Math.sqrt(t * t + e * e);
+                    guns[i].ox = guns[i].x,
+                    guns[i].oy = guns[i].y;
+					var llll = Math.sqrt(Math.pow(guns[i].x - bx, 2) + Math.pow(guns[i].y - by, 2));
+                    llll < 900 && 
+					(guns[i].x -= bulletSpeed * t / s,
+                    guns[i].y -= bulletSpeed * e / s);
+                    ctx.strokeStyle = "#ffffff",
+                    ctx.beginPath(),
+                    ctx.moveTo(guns[i].ox - bulletSpeed * t / s * bulletLength, guns[i].oy - bulletSpeed * e / s * bulletLength),
+                    ctx.lineTo(guns[i].ox, guns[i].oy),
+                    ctx.lineWidth = 1 + Math.abs(Math.sin(oke) * 6),
+                    ctx.stroke();
+					var hited = false;
+					var jj = 0;
+					for (var jj = 0; jj < px.length; jj += px.length / 5) {
+						var a = Math.sqrt(Math.pow(guns[i].x - px[jj], 2) + Math.pow(guns[i].y - py[jj], 2)),
+						o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed,
+						c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed,
+						n = Math.sqrt(Math.pow(o - px[jj], 2) + Math.pow(c - py[jj], 2));
+						if (ssize > n && a < bulletSpeed * bulletLength) {
+							hited = true;
+							break;
+						}
+					}
+                    if (hited) {
+						score += 1;
+						guns[jj].x = -100, 
+						guns[jj].y =-100, 
+						guns[jj].tx = -106,
+						guns[jj].ty =-106,
+						guns[jj].ox = -100, 
+						guns[jj].oy = -100;
+						var sub = Math.random() > 0.1;
+						sub && (size -= 1);
+                        for (bldid += 1, ctx.fillStyle = "#ff5621", ctx.globalAlpha = .4, ctx.beginPath(), ctx.arc(guns[i].x, guns[i].y, 4 * ssize, 0, 2 * Math.PI, !0), ctx.lineWidth = (1 + ssize) / 4, ctx.fill(), j = 0; 25 > j; j++) {
+                            var l = x + j * Math.sin(j + x / 7.2 * Math.random()) * 9,
+                            r = y + j * Math.cos(j - y / 7.2 * Math.random()) * 9;
+                            bctx.globalAlpha = .1,
+                            bctx.fillStyle = "#990011",
+                            bctx.beginPath(),
+                            bctx.arc(l, r, 27 - j, 0, 2 * Math.PI, !0),
+                            bctx.shadowOffsetX = 4,
+                            bctx.shadowOffsetY = 4,
+                            bctx.shadowBlur = 5,
+                            bctx.shadowColor = "rgba(0,0,0,0.5)",
+                            sub && bctx.fill()
+                        }
+						ctx.globalAlpha = 1;
+                        for (u = size - 3; size > u; u++) px[u] = -500,
+                        py[u] = -2e3;
+                        space > 0 && Math.random() > 0.12 && (gx = winWidth * Math.random(), gy = winHeight * Math.random())
+                    }
+                } catch(h) {
+                    ctx.strokeText(h, 16, 46)
+                }
+                ssize = size,
+                rok += .8;
+                var g = line + 5 * Math.cos(rok);
+                if (st += uptt, uptt += upt, uptt *= .7, sx = bx + 1e4 * Math.sin(st), sy = by + 1e4 * Math.cos(st), st = Math.atan2(sx - bx, sy - by), ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * g, by + Math.cos(st) * g), ctx.lineWidth = 7, ctx.stroke(), ctx.strokeStyle = "#063", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line2, by + Math.cos(st) * line2), ctx.lineWidth = 10, ctx.stroke(), ctx.strokeStyle = "#000", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * line3, by + Math.cos(st) * line3), ctx.lineWidth = 16, ctx.stroke(), ctx.strokeStyle = "#031", ctx.beginPath(), ctx.moveTo(bx, by), ctx.lineTo(bx + Math.sin(st) * (line3 - 2), by + Math.cos(st) * (line3 - 2)), ctx.lineWidth = 34, ctx.stroke(), 0 == times && (ctx.beginPath(), ctx.strokeStyle = "#fff", ctx.moveTo(bx + Math.sin(st) * (g + 30), by + Math.cos(st) * (g + 30)), ctx.lineTo(bx + Math.sin(st) * (g + 3), by + Math.cos(st) * (g + 3)), ctx.lineWidth = 15, fire && ctx.stroke()), ctx.fillStyle = "#ffff00", ctx.fillText("战绩 " + score, 15, 80), ctx.fillStyle = "#ffff00", 0 >= space) {
+                    space = 0,
+                    st = 0;
+                    
+                    tcolor = "#af6c88",
+                    ctx.fillText(name + "，你坚持了" + score + "个时辰。", 280, 60),
+                    ctx.fillText("你" + (score > 35 ? "成功等到了" : "还没有等到") + "援军，", 280, 100);
+					ctx.fillText(score > 35 ? "妖兽也失去了踪迹。" : "两天后援军找到了你的尸体。", 280, 140);
+					try {
+						if (!best || best < score) {
+							best = score;
+							bestName = name;
+							localStorage.setItem("bestScore", best);
+							localStorage.setItem("bestName", name);
+						}
+					} catch(h) {}
+					if (bestName)
+						ctx.fillText("史料记载，最伟大的统领", 280, 180),
+						ctx.fillText("坚持了" + best + "个时辰，", 280, 220),
+						ctx.fillText("他叫" + bestName+ "。", 280, 260);
+                    ctx.fillText(score >= best ? "你已被载入史册" : "", 280, 300);
+					for (var jj = 0; jj < guns.length; jj += 1) {
+						guns[jj].x = -100,
+						guns[jj].y =-100, 
+						guns[jj].tx = -106,
+						guns[jj].ty =-106,
+						guns[jj].ox = -100, 
+						guns[jj].oy = -100;
+					}
+                }
+				
+                ctx.fillText("余粮 " + space + "担", 15, 125);
+				if (times == loadBulTime) ctx.fillStyle = "#ff3465";
+				ctx.fillText("装填 " + times + "/" + loadBulTime + "火药", 15, 170);
+				ctx.beginPath();
+				ctx.fillStyle = "#121212";
+				ctx.arc(bx, by, 12, 0, Math.PI * 2, false);
+				ctx.closePath();
+				ctx.fill();
+            }
+            var input = document.getElementById("input"),
+            canvas = document.getElementById("canvas"),
+            ctx = canvas.getContext("2d"),
+            bgc = document.getElementById("bg"),
+            bctx = bgc.getContext("2d");
+            function loadGame() {
+				for (bctx.shadowOffsetX = 4, bctx.shadowOffsetY = 4, bctx.shadowBlur = 0, bctx.shadowColor = "rgba(0,0,0,0.4)", bctx.strokeStyle = "#8D9A8C", bctx.lineWidth = 2, bctx.fillStyle = "#2E2A3C", bctx.fillRect(0, 0, winWidth, winHeight), bctx.globalAlpha = .1, i = 0; 500 > i; i++) {
+				    var x1 = winWidth * Math.random(),
+				    y1 = winHeight * Math.random(),
+				    x2 = winWidth * Math.random(),
+				    y2 = winHeight * Math.random();
+				    bctx.beginPath(),
+				    bctx.moveTo(x1, y1),
+				    bctx.lineTo(x2, y2),
+				    bctx.stroke(),
+				    bctx.strokeRect(x1, y1, x2, y2)
+				}
+				for (bctx.strokeStyle = "#6D5E7A", i = 0; 400 > i; i++) {
+				    var x1 = winWidth * Math.random(),
+				    y1 = winHeight * Math.random(),
+				    x2 = winWidth * Math.random(),
+				    y2 = winHeight * Math.random();
+				    bctx.beginPath(),
+				    bctx.moveTo(x1, y1),
+				    bctx.lineTo(x2, y2),
+				    bctx.stroke(),
+				    bctx.strokeRect( - x1, -y1, x2, y2)
+				}
+				for (bctx.strokeStyle = "#3E4A4F", i = 0; 250 > i; i++) {
+				    var x1 = winWidth * Math.random(),
+				    y1 = winHeight * Math.random(),
+				    x2 = winWidth * Math.random(),
+				    y2 = winHeight * Math.random();
+				    bctx.beginPath(),
+				    bctx.moveTo(x1, y1),
+				    bctx.lineTo(x2, y2),
+				    bctx.stroke(),
+				    bctx.strokeRect( - x1, -y1, x2, y2)
+				}
+			}
+            var x = 100,
+            y = winHeight / 2,
+            px = new Array(3),
+            py = new Array(3),
+            ph = new Array(3),
+            gx = 430,
+            gy = 266,
+            size = 3,
+            sss = 0,
+            speed = 15,
+            gsize = 0,
+            pindex = 0,
+            tl = 0,
+            tx = 660,
+            ty = 60,
+            tcolor = "#fff",
+            oke = 0,
+            ssize = 0,
+            score = 0,
+            space = goodSize,
+            name = "匿名者",
+            best = 0,
+			bestName = 0,
+            ssizestart = ssize;
+            var sx = winWidth / 2,
+            sy = 0,
+            line = 150,
+            line2 = 80,
+            line3 = 30,
+            bx = winWidth * 0.2,
+            by = winHeight * 0.9,
+            st = Math.atan2(sx - bx, sy - by),
+            upt = 0,
+            rok = 0,
+            ung = 20,
+            guns = new Array(ung),
+            gi = 0,
+            uptt = 0,
+            bldid = 0;
+            
+			var helpStr = input.value;
+            var times = 0;
+			var bulletSpeed = 18;
+			var goodSize = 24;
+			var fire = false;
+			var bulletLength = 4;
+			var mouse_x = 50, mouse_y = 50;
+			var loadBulTime = 165;
+			
+			var bugHart = 100;
+
+        </script>
+    </body>
+
+</html>
