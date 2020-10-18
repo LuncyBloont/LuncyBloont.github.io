@@ -16,8 +16,8 @@
         </style>
     </head>
     
-    <body onmousemove="event.preventDefault();mouseM(event.pageX, event.pageY)" 
-		ontouchmove="event.preventDefault();mouseM(event.touches[0].clientX, event.touches[0].clientY)"
+    <body onmousemove="mouseM(event.pageX, event.pageY)" 
+		ontouchmove="mouseM(event.touches[0].clientX, event.touches[0].clientY)"
 		onmousedown="mouseM(event.pageX, event.pageY); fire = true;" 
 		ontouchstart="mouseM(event.touches[0].clientX, event.touches[0].clientY); fire = true;">
         <div class="frame">
