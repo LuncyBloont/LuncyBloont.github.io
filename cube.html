@@ -5,7 +5,7 @@
 		<title>欧皇投色子</title>
 		<script>
 			// Define
-			var minTrg = 19; //at least 5;
+			var minTrg = 12; //at least 5;
 			var gcolor = new Color(0, 0, 0, 1);
 			var sky = new Color(255, 255, 255, 1);
 			var canvas;
@@ -31,26 +31,27 @@
 				this.b = b;
 				this.a = a;
 				this.getColorHex = function() {
-					return "#" + toHex(r) + toHex(g) + toHex(b);
+					return "#" + toHex(this.r) + toHex(this.g) + toHex(this.b);
 				}
 				this.getColorRGB = function() {
-					return "rgb(" + r + ", " + g + ", " + b + ")";
+					return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
 				}
 				this.getDarkerColor = function(dark) {
-					return new Color(parseInt(r * dark), parseInt(g * dark), parseInt(b * dark), a);
+					return new Color(parseInt(this.r * dark), parseInt(this.g * dark),
+						parseInt(this.b * dark), this.a);
 				}
 				this.getLighterColor = function(light) {
-					var nr = parseInt(r * light);
-					var ng = parseInt(g * light);
-					var nb = parseInt(b * light);
-					return new Color(nr > 255 ? 255 : nr, ng > 255 ? 255 : ng, nb > 255 ? 255 : nb, a);
+					var nr = parseInt(this.r * light);
+					var ng = parseInt(this.g * light);
+					var nb = parseInt(this.b * light);
+					return new Color(nr > 255 ? 255 : nr, ng > 255 ? 255 : ng, nb > 255 ? 255 : nb, this.a);
 				}
 				this.getAlphaColor = function(alp) {
-					var na = a * alp;
-					return new Color(r, g, b, na > 1 ? 1 : na);
+					var na = this.a * alp;
+					return new Color(this.r, this.g, this.b, na > 1 ? 1 : na);
 				}
 				this.clone = function() {
-					return new Color(r, g, b, a);
+					return new Color(this.r, this.g, this.b, this.a);
 				}
 			}
 			function Point2D(x, y, z) {
@@ -58,7 +59,7 @@
 				this.y = y;
 				this.z = z;
 				this.clone = function() {
-					return new Point2D(x, y, z);
+					return new Point2D(this.x, this.y, this.z);
 				}
 			}
 			function Point3D(x, y, z) {
@@ -67,10 +68,11 @@
 				this.z = z;
 				this.get2D = function() {
 					var cx = winWidth / 2, cy = winHeight / 2;
-					return new Point3D(cx + (x - cx) * focus / z, cy + (y - cy) * focus / z, z);
+					return new Point3D(cx + (this.x - cx) * focus / this.z, 
+						cy + (this.y - cy) * focus / this.z, this.z);
 				}
 				this.clone = function() {
-					return new Point3D(x, y, z);
+					return new Point3D(this.x, this.y, this.z);
 				}
 			}
 			function Trg(a, b, c) {
@@ -78,7 +80,7 @@
 				this.b = b;
 				this.c = c;
 				this.clone = function() {
-					return new Trg(a, b, c);
+					return new Trg(this.a, this.b, this.c);
 				}
 			}
 			
@@ -102,10 +104,14 @@
 				zData = new Array(0);
 			}
 			function putMinTrg(trg) {
-				var zz = (trg.a.z + trg.b.z + trg.c.z) / 3;
+				var zz = [trg.a.z, trg.b.z, trg.c.z];
+				var z = zz[0];
+				for (var i = 1; i < zz.length; i++) {
+					z = zz[i] > z ? zz[i] : z;
+				}
 				zData[zData.length] = new DrawAble(trg.a.x, trg.a.y,
 					trg.b.x, trg.b.y,
-					trg.c.x, trg.c.y, zz, gcolor.clone());
+					trg.c.x, trg.c.y, z, gcolor.clone());
 			}
 			function sort(l, r) {
 				if (l < r) {
@@ -157,8 +163,8 @@
 			}
 			function isTrgSubable(trg) {
 				if (trg.a.z < focus || trg.b.z < focus || trg.c.z < focus) return false;
-				if (distance2(trg.a, trg.b) > minTrg && 
-				distance2(trg.b, trg.c) > minTrg &&
+				if (distance2(trg.a, trg.b) > minTrg || 
+				distance2(trg.b, trg.c) > minTrg ||
 				distance2(trg.c, trg.a) > minTrg) return true;
 				return false;
 			}
@@ -178,21 +184,22 @@
 			}
 			function rotation(p, cp, rx, ry, rz) {
 				var np = p.clone();
+				np.x += 12;
 				var l;
 				l = Math.sqrt(Math.pow(np.y - cp.y, 2) + Math.pow(np.z - cp.z, 2));
 				rx += Math.atan2(np.y - cp.y, np.z - cp.z);
 				np.y = cp.y + Math.cos(rx) * l;
 				np.z = cp.z + Math.sin(rx) * l;
 				
-				/*l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.z - cp.z, 2));
-				y += Math.atan2(np.x - cp.x, np.z - cp.z);
-				np.x = cp.x + Math.cos(y) * l;
-				np.z = cp.z + Math.sin(y) * l;
+				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.z - cp.z, 2));
+				ry += Math.atan2(np.x - cp.x, np.z - cp.z);
+				np.x = cp.x + Math.cos(ry) * l;
+				np.z = cp.z + Math.sin(ry) * l;
 				
 				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.y - cp.y, 2));
-				z += Math.atan2(np.x - cp.x, np.y - cp.y);
-				np.x = cp.x + Math.cos(z) * l;
-				np.y = cp.y + Math.sin(z) * l;*/
+				rz += Math.atan2(np.x - cp.x, np.y - cp.y);
+				np.x = cp.x + Math.cos(rz) * l;
+				np.y = cp.y + Math.sin(rz) * l;
 				
 				return np;
 			}
@@ -203,21 +210,23 @@
 			CreateCanvas(600, 600);
 			canvas.style.width = "60%";
 			document.body.appendChild(canvas);
-			var ww = 0;
+			var ww = 0.2, vv = 0, kk = 0;
 			
 			function update() {
 				clear();
-				var p1 = rotation(new Point3D(200, 200, 600), new Point3D(300, 300, 500), ww, 0, 0);
-				var p2 = rotation(new Point3D(200, 400, 600), new Point3D(300, 300, 500), ww, 0, 0);
-				var p3 = rotation(new Point3D(400, 400, 600), new Point3D(300, 300, 500), ww, 0, 0);
-				var p4 = rotation(new Point3D(400, 200, 600), new Point3D(300, 300, 500), ww, 0, 0);
-				var p5 = rotation(new Point3D(200, 200, 400), new Point3D(300, 300, 500), ww, 0, 0);
-				var p6 = rotation(new Point3D(200, 400, 400), new Point3D(300, 300, 500), ww, 0, 0);
-				var p7 = rotation(new Point3D(400, 400, 400), new Point3D(300, 300, 500), ww, 0, 0);
-				var p8 = rotation(new Point3D(400, 200, 400), new Point3D(300, 300, 500), ww, 0, 0);
+				var p1 = rotation(new Point3D(200, 200, 800), new Point3D(300, 300, 700), ww, vv, kk);
+				var p2 = rotation(new Point3D(200, 400, 800), new Point3D(300, 300, 700), ww, vv, kk);
+				var p3 = rotation(new Point3D(400, 400, 800), new Point3D(300, 300, 700), ww, vv, kk);
+				var p4 = rotation(new Point3D(400, 200, 800), new Point3D(300, 300, 700), ww, vv, kk);
+				var p5 = rotation(new Point3D(200, 200, 600), new Point3D(300, 300, 700), ww, vv, kk);
+				var p6 = rotation(new Point3D(200, 400, 600), new Point3D(300, 300, 700), ww, vv, kk);
+				var p7 = rotation(new Point3D(400, 400, 600), new Point3D(300, 300, 700), ww, vv, kk);
+				var p8 = rotation(new Point3D(400, 200, 600), new Point3D(300, 300, 700), ww, vv, kk);
 				var t;
 				
 				ww += 0.01;
+				vv += 0.02;
+				kk += 0.03;
 				
 				gcolor = new Color(253, 25, 255, 0.7);
 				t = new Trg(p1, p2, p5);
