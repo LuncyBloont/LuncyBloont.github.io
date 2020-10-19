@@ -18,6 +18,36 @@
 					"picture" : "./image/menu/bugart.png",
 					"src" : "./BugArt.html"
 				},
+				"bugart1" : {
+					"name" : "巨怪怪",
+					"description" : "一个训练直觉和节奏的游戏（略困难）",
+					"picture" : "./image/menu/bugart.png",
+					"src" : "./BugArt.html"
+				},
+				"bugart2" : {
+					"name" : "巨怪怪",
+					"description" : "一个训练直觉和节奏的游戏（略困难）",
+					"picture" : "./image/menu/bugart.png",
+					"src" : "./BugArt.html"
+				},
+				"bugart3" : {
+					"name" : "巨怪怪",
+					"description" : "一个训练直觉和节奏的游戏（略困难）",
+					"picture" : "./image/menu/bugart.png",
+					"src" : "./BugArt.html"
+				},
+				"bugart4" : {
+					"name" : "巨怪怪",
+					"description" : "一个训练直觉和节奏的游戏（略困难）",
+					"picture" : "./image/menu/bugart.png",
+					"src" : "./BugArt.html"
+				},
+				"bugart5" : {
+					"name" : "巨怪怪",
+					"description" : "一个训练直觉和节奏的游戏（略困难）",
+					"picture" : "./image/menu/bugart.png",
+					"src" : "./BugArt.html"
+				},
 				"cube" : {
 					"name" : "百团大战抽奖活动",
 					"description" : "参与百团大战抽奖，赢取Steam游戏！！",
@@ -26,12 +56,12 @@
 				}
 			};
 			function makeItem(name, description, picsrc, src) {
-				var td = document.createElement("td");
 				var div = document.createElement("div");
 				var image = document.createElement("img");
 				var desDiv = document.createElement("div");
 				var desP = document.createElement("p");
 				var p = document.createElement("p");
+				var td = document.createElement("td");
 				div.className = "item";
 				p.innerHTML = "<br />" + name + "<br />&nbsp;";
 				p.align = "center";
@@ -49,45 +79,64 @@
 				desDiv.style.position = "inherit";
 				desDiv.style.height = "300px";
 				desDiv.style.top = "0px";
-				div.style.margin = "10px 10px 10px 10px";
+				div.style.margin = "30px 10px 30px 10px";
 				desP.style.margin = "8px 15px 0px 15px";
 				p.style.margin = "0px 12px 3px 12px";
 				name && div.appendChild(p);
 				picsrc && div.appendChild(image);
 				description && div.appendChild(desDiv);
-				td.align = "top";
 				div.style.overflow = "scroll";
 				div.style.border = "#ff2323 1px solid";
-				td.appendChild(div);
 				div.onclick = function() {
 					window.open(src);
 				};
 				if (!name) div.innerHTML = "", 
 					div.style.opacity = "0";
+				td.appendChild(div);
 				return td;
 			}
 			function loadItem() {
 				var panel = document.getElementById("panel");
 				var col = 0;
-				var maxcol = 6;
+				var maxcol = 3;
 				var tr = document.createElement("tr");
+				var td = document.createElement("td");
+				var div = document.createElement("div");
+				var ttb = document.createElement("table");
+				var ttr = document.createElement("tr");
+				div.style.overflow = "scroll";
+				div.style.width = document.body.clientWidth + "px";
+				tr.appendChild(td);
+				div.appendChild(ttb);
+				ttb.appendChild(ttr);
+				td.appendChild(div);
 				for (i in items) {
 					var name = items[i].name;
 					var description = items[i].description;
 					var picsrc = items[i].picture;
 					var src = items[i].src;
-					var td = makeItem(name, description, picsrc, src);
-					tr.appendChild(td);
+					var it = makeItem(name, description, picsrc, src);
+					ttr.appendChild(it);
 					col++;
 					if (col == maxcol) {
 						panel.appendChild(tr);
 						tr = document.createElement("tr");
+						td = document.createElement("td");
+						div = document.createElement("div");
+						ttb = document.createElement("table");
+						ttr = document.createElement("tr");
+						ttd = document.createElement("td");
+						div.style.overflow = "scroll";
+						div.style.width = document.body.clientWidth + "px";
+						tr.appendChild(td);
+						div.appendChild(ttb);
+						ttb.appendChild(ttr);
+						td.appendChild(div);
+						col = 0;
 					}
 				}
 				if (col != maxcol) {
-					for (;col < maxcol; col++) {
-						tr.appendChild(makeItem());
-					}
+					
 					panel.appendChild(tr);
 				}
 			}
