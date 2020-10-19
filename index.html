@@ -140,17 +140,24 @@
 					panel.appendChild(tr);
 				}
 			}
+			function startPage() {
+				loadItem();
+				document.getElementsByClassName("tip")[0].innerHTML = "";
+			}
 		</script>
 	</head>
 	<body>
 		
 		<h1 align="center">HTML5 游戏站</h1>
+		<p align="center" class="tip">
+			请使用手机浏览器打开该页面
+		</p>
 		<div style="border: #454545 2px solid;width: 100%;"></div>
 		<br /><br />
 		<table style="width: 80%;margin: auto;" border="0" id="panel">
 		</table>
 		<script>
-			loadItem();
+			setTimeout(startPage, 1500);
 		</script>
 		<style>
 			.item {
