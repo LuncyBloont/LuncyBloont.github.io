@@ -3,7 +3,278 @@
 	<head>
 		<meta charset="utf-8">
 		<title>欧皇投色子</title>
+		<script>
+			// Define
+			var minTrg = 19; //at least 5;
+			var gcolor = new Color(0, 0, 0, 1);
+			var sky = new Color(255, 255, 255, 1);
+			var canvas;
+			var ctx;
+			var zData;
+			var focus;
+			var winWidth, winHeight;
+			
+			// Class
+			function DrawAble(x1, y1, x2, y2, x3, y3, z, c) {
+				this.x1 = x1;
+				this.y1 = y1;
+				this.x2 = x2;
+				this.y2 = y2;
+				this.x3 = x3;
+				this.y3 = y3;
+				this.z = z;
+				this.color = c;
+			}
+			function Color(r, g, b, a) {
+				this.r = r;
+				this.g = g;
+				this.b = b;
+				this.a = a;
+				this.getColorHex = function() {
+					return "#" + toHex(r) + toHex(g) + toHex(b);
+				}
+				this.getColorRGB = function() {
+					return "rgb(" + r + ", " + g + ", " + b + ")";
+				}
+				this.getDarkerColor = function(dark) {
+					return new Color(parseInt(r * dark), parseInt(g * dark), parseInt(b * dark), a);
+				}
+				this.getLighterColor = function(light) {
+					var nr = parseInt(r * light);
+					var ng = parseInt(g * light);
+					var nb = parseInt(b * light);
+					return new Color(nr > 255 ? 255 : nr, ng > 255 ? 255 : ng, nb > 255 ? 255 : nb, a);
+				}
+				this.getAlphaColor = function(alp) {
+					var na = a * alp;
+					return new Color(r, g, b, na > 1 ? 1 : na);
+				}
+				this.clone = function() {
+					return new Color(r, g, b, a);
+				}
+			}
+			function Point2D(x, y, z) {
+				this.x = x;
+				this.y = y;
+				this.z = z;
+				this.clone = function() {
+					return new Point2D(x, y, z);
+				}
+			}
+			function Point3D(x, y, z) {
+				this.x = x;
+				this.y = y;
+				this.z = z;
+				this.get2D = function() {
+					var cx = winWidth / 2, cy = winHeight / 2;
+					return new Point3D(cx + (x - cx) * focus / z, cy + (y - cy) * focus / z, z);
+				}
+				this.clone = function() {
+					return new Point3D(x, y, z);
+				}
+			}
+			function Trg(a, b, c) {
+				this.a = a;
+				this.b = b;
+				this.c = c;
+				this.clone = function() {
+					return new Trg(a, b, c);
+				}
+			}
+			
+			// Function
+			function CreateCanvas(width, height) {
+				winWidth = width;
+				winHeight = height;
+				canvas = document.createElement("canvas");
+				canvas.width = width;
+				canvas.height = height;
+				focus = width / 2;
+				zData = new Array(0);
+				for (var i = 0; i < width; i++) {
+					zData[i] = new Array(parseInt(height / minTrg));
+				}
+				ctx = canvas.getContext("2d");
+			}
+			function clear() {
+				ctx.fillStyle = sky.getColorRGB();
+				ctx.fillRect(0, 0, winWidth, winHeight);
+				zData = new Array(0);
+			}
+			function putMinTrg(trg) {
+				var zz = (trg.a.z + trg.b.z + trg.c.z) / 3;
+				zData[zData.length] = new DrawAble(trg.a.x, trg.a.y,
+					trg.b.x, trg.b.y,
+					trg.c.x, trg.c.y, zz, gcolor.clone());
+			}
+			function sort(l, r) {
+				if (l < r) {
+					var i = l, j = r, x = zData[l];
+					while (i < j) {
+						while (i < j && zData[j].z <= x.z) {
+							j--;
+						}
+						if (i < j) {
+							zData[i++] = zData[j];
+						}
+						while(i < j && zData[i].z > x.z) {
+							i++;
+						}  
+						if(i < j) {
+							zData[j--] = zData[i];
+						}
+					}
+					zData[i] = x;
+					sort(l, i - 1);
+					sort(i + 1, r);
+				}
+			}
+			function drawAll() {
+				sort(0, zData.length - 1);
+				for (var i = 0; i < zData.length; i++) {
+					ctx.fillStyle = zData[i].color.getColorHex();
+					ctx.globalAlpha = zData[i].color.a;
+					ctx.beginPath();
+					ctx.moveTo(zData[i].x1, zData[i].y1);
+					ctx.lineTo(zData[i].x2, zData[i].y2);
+					ctx.lineTo(zData[i].x3, zData[i].y3);
+					ctx.closePath();
+					ctx.fill();
+				}
+			}
+			function toHex(n, len) {
+				n = n.toString(16) + "";
+				for (var i = 0; i < len; i++) {
+					n = "0" + n;
+				}
+				return n.substr(n.length - len, n.length);
+			}
+			function distance2(a, b) {
+				return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+			}
+			function distance3(a, b) {
+				return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
+			}
+			function isTrgSubable(trg) {
+				if (trg.a.z < focus || trg.b.z < focus || trg.c.z < focus) return false;
+				if (distance2(trg.a, trg.b) > minTrg && 
+				distance2(trg.b, trg.c) > minTrg &&
+				distance2(trg.c, trg.a) > minTrg) return true;
+				return false;
+			}
+			function drawTrg(trg) {
+				var trg2D = new Trg(trg.a.get2D(), trg.b.get2D(), trg.c.get2D());
+				if (!isTrgSubable(trg2D)) {
+					putMinTrg(trg2D);
+					return;
+				}
+				var p1 = new Point3D((trg.a.x + trg.b.x) / 2, (trg.a.y + trg.b.y) / 2, (trg.a.z + trg.b.z) / 2);
+				var p2 = new Point3D((trg.b.x + trg.c.x) / 2, (trg.b.y + trg.c.y) / 2, (trg.b.z + trg.c.z) / 2);
+				var p3 = new Point3D((trg.c.x + trg.a.x) / 2, (trg.c.y + trg.a.y) / 2, (trg.c.z + trg.a.z) / 2);
+				drawTrg(new Trg(trg.a, p1, p3));
+				drawTrg(new Trg(p1, trg.b, p2));
+				drawTrg(new Trg(p2, trg.c, p3));
+				drawTrg(new Trg(p1, p2, p3));
+			}
+			function rotation(p, cp, rx, ry, rz) {
+				var np = p.clone();
+				var l;
+				l = Math.sqrt(Math.pow(np.y - cp.y, 2) + Math.pow(np.z - cp.z, 2));
+				rx += Math.atan2(np.y - cp.y, np.z - cp.z);
+				np.y = cp.y + Math.cos(rx) * l;
+				np.z = cp.z + Math.sin(rx) * l;
+				
+				/*l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.z - cp.z, 2));
+				y += Math.atan2(np.x - cp.x, np.z - cp.z);
+				np.x = cp.x + Math.cos(y) * l;
+				np.z = cp.z + Math.sin(y) * l;
+				
+				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.y - cp.y, 2));
+				z += Math.atan2(np.x - cp.x, np.y - cp.y);
+				np.x = cp.x + Math.cos(z) * l;
+				np.y = cp.y + Math.sin(z) * l;*/
+				
+				return np;
+			}
+		</script>
 	</head>
 	<body>
+		<script>
+			CreateCanvas(600, 600);
+			canvas.style.width = "60%";
+			document.body.appendChild(canvas);
+			var ww = 0;
+			
+			function update() {
+				clear();
+				var p1 = rotation(new Point3D(200, 200, 600), new Point3D(300, 300, 500), ww, 0, 0);
+				var p2 = rotation(new Point3D(200, 400, 600), new Point3D(300, 300, 500), ww, 0, 0);
+				var p3 = rotation(new Point3D(400, 400, 600), new Point3D(300, 300, 500), ww, 0, 0);
+				var p4 = rotation(new Point3D(400, 200, 600), new Point3D(300, 300, 500), ww, 0, 0);
+				var p5 = rotation(new Point3D(200, 200, 400), new Point3D(300, 300, 500), ww, 0, 0);
+				var p6 = rotation(new Point3D(200, 400, 400), new Point3D(300, 300, 500), ww, 0, 0);
+				var p7 = rotation(new Point3D(400, 400, 400), new Point3D(300, 300, 500), ww, 0, 0);
+				var p8 = rotation(new Point3D(400, 200, 400), new Point3D(300, 300, 500), ww, 0, 0);
+				var t;
+				
+				ww += 0.01;
+				
+				gcolor = new Color(253, 25, 255, 0.7);
+				t = new Trg(p1, p2, p5);
+				drawTrg(t);
+				t = new Trg(p2, p6, p5);
+				drawTrg(t);
+				// 
+				
+				gcolor = new Color(23, 255, 255, 0.7);
+				t = new Trg(p2, p6, p7);
+				drawTrg(t);
+				t = new Trg(p2, p7, p3);
+				drawTrg(t);
+				// 
+				
+				gcolor = new Color(23, 25, 255, 0.7);
+				t = new Trg(p3, p7, p8);
+				drawTrg(t);
+				t = new Trg(p4, p3, p8);
+				drawTrg(t);
+				// 
+				
+				gcolor = new Color(223, 25, 25, 0.7);
+				t = new Trg(p1, p4, p8);
+				drawTrg(t);
+				t = new Trg(p5, p8, p1);
+				drawTrg(t);
+				// 
+				
+				gcolor = new Color(213, 225, 25, 0.7);
+				t = new Trg(p1, p2, p3);
+				drawTrg(t);
+				t = new Trg(p3, p4, p1);
+				drawTrg(t);
+				//
+				
+				gcolor = new Color(213, 225, 25, 0.7);
+				t = new Trg(p5, p6, p7);
+				drawTrg(t);
+				t = new Trg(p5, p7, p8);
+				drawTrg(t);
+				//
+				
+				
+				drawAll();
+			}
+			
+			setInterval(update, 30);
+			
+			
+			// Test
+			/*var color = new Color(55, 155, 205, 0.3);
+			alert(color.getColorHex());
+			alert(color.getLighterColor(2).getColorRGB());
+			alert(color.getAlphaColor(2).a);
+			alert(color.getAlphaColor(2).getAlphaColor(2).a);*/
+			
+		</script>
 	</body>
 </html>

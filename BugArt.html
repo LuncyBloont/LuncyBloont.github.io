@@ -416,9 +416,12 @@
 						0 >= space) {
                     space = 0,
                     st = 0;
-                    
+                    if (ending) {
+						ending = false;
+						setTimeout("location.reload(false)", 14000);
+					}
                     tcolor = "#fff",
-                    ctx.fillText(name + "，你创造了" + (score + "").substr(0, (score + "").indexOf(".") + 2) + "的战绩。", 280, 60),
+                    ctx.fillText(name + "，你创造了" + (score + "").substr(0, (score + "").indexOf(".") + 2) + "的战绩。14s后刷新游戏。", 280, 60),
                     ctx.fillText("你" + (score > 15 ? "成功等到了" : "还没有等到") + "援军，", 280, 100);
 					ctx.fillText(score > 15 ? "妖兽也失去了踪迹。" : "两天后，援军发现了你的遗骸。", 280, 140);
 					try {
@@ -431,7 +434,7 @@
 					} catch(h) {}
 					if (bestName)
 						ctx.fillText("史料记载，最伟大的射手", 280, 180),
-						ctx.fillText("拿下了" + best + "战绩，", 280, 220),
+						ctx.fillText("拿下了" + (best + "").substr(0, (best + "").indexOf(".") + 2) + "战绩，", 280, 220),
 						ctx.fillText("他叫" + bestName+ "。", 280, 260);
                     ctx.fillText(score >= best ? "你已被载入史册" : "", 280, 300);
 					for (var jj = 0; jj < guns.length; jj += 1) {
@@ -554,7 +557,7 @@
 			var mouse_x = 50, mouse_y = 50;
 			var loadBulTime = 245;
 			times = loadBulTime;
-			
+			var ending = true;
 			var bugHart = 100;
 			var toR = 0;
 			var torSpeed = 0.03;
