@@ -5,12 +5,13 @@
 		<title>欧皇投色子</title>
 		<script>
 			// Define
-			var minTrg = 18; //at least 5;
+			var minTrg = 15; //at least 5;
 			var gcolor = new Color(0, 0, 0, 1);
 			var sky = new Color(255, 255, 255, 1);
 			var canvas;
 			var ctx;
 			var zData;
+			var zLen = 0, zMax = 10000;
 			var focus;
 			var winWidth, winHeight;
 			
@@ -25,33 +26,36 @@
 				this.z = z;
 				this.color = c;
 			}
-			function Color(r, g, b, a) {
+			function Color(r, g, b, a, m = true, line = false) {
 				this.r = r;
 				this.g = g;
 				this.b = b;
 				this.a = a;
+				this.m = m;
+				this.line = line;
 				this.getColorHex = function() {
-					return "#" + toHex(this.r) + toHex(this.g) + toHex(this.b);
+					return "#" + toHex(this.r, 2) + toHex(this.g, 2) + toHex(this.b, 2);
 				}
 				this.getColorRGB = function() {
 					return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
 				}
 				this.getDarkerColor = function(dark) {
 					return new Color(parseInt(this.r * dark), parseInt(this.g * dark),
-						parseInt(this.b * dark), this.a);
+						parseInt(this.b * dark), this.a, this.m, this.line);
 				}
 				this.getLighterColor = function(light) {
 					var nr = parseInt(this.r * light);
 					var ng = parseInt(this.g * light);
 					var nb = parseInt(this.b * light);
-					return new Color(nr > 255 ? 255 : nr, ng > 255 ? 255 : ng, nb > 255 ? 255 : nb, this.a);
+					return new Color(nr > 255 ? 255 : nr, ng > 255 ? 255 : ng, nb > 255 ? 255 : nb,
+						this.a, this.m, this.line);
 				}
 				this.getAlphaColor = function(alp) {
 					var na = this.a * alp;
-					return new Color(this.r, this.g, this.b, na > 1 ? 1 : na);
+					return new Color(this.r, this.g, this.b, na > 1 ? 1 : na, this.m, this.line);
 				}
 				this.clone = function() {
-					return new Color(this.r, this.g, this.b, this.a);
+					return new Color(this.r, this.g, this.b, this.a, this.m, this.line);
 				}
 			}
 			function Point2D(x, y, z) {
@@ -68,8 +72,11 @@
 				this.z = z;
 				this.get2D = function() {
 					var cx = winWidth / 2, cy = winHeight / 2;
-					return new Point3D(cx + (this.x - cx) * focus / this.z, 
+					var res = new Point3D(cx + (this.x - cx) * focus / this.z, 
 						cy + (this.y - cy) * focus / this.z, this.z);
+					var nz = distance3(new Point3D(cx, cy, 0), res);
+					res.z = nz;
+					return res;
 				}
 				this.clone = function() {
 					return new Point3D(this.x, this.y, this.z);
@@ -92,7 +99,7 @@
 				canvas.width = width;
 				canvas.height = height;
 				focus = width / 2;
-				zData = new Array(0);
+				zData = new Array(zMax);
 				for (var i = 0; i < width; i++) {
 					zData[i] = new Array(parseInt(height / minTrg));
 				}
@@ -101,51 +108,62 @@
 			function clear() {
 				ctx.fillStyle = sky.getColorRGB();
 				ctx.fillRect(0, 0, winWidth, winHeight);
-				zData = new Array(0);
+				ctx.globalAlpha = sky.a;
+				zLen = 0;
 			}
 			function putMinTrg(trg) {
 				var zz = [trg.a.z, trg.b.z, trg.c.z];
 				var z = zz[0];
 				for (var i = 1; i < zz.length; i++) {
-					z = zz[i] > z ? zz[i] : z;
+					z = zz[i] < z ? zz[i] : z;
 				}
-				zData[zData.length] = new DrawAble(trg.a.x, trg.a.y,
+				zData[zLen] = new DrawAble(trg.a.x, trg.a.y,
 					trg.b.x, trg.b.y,
 					trg.c.x, trg.c.y, z, gcolor.clone());
+				zLen++;
 			}
-			function sort(l, r) {
+			function sort(a, l, r) {
 				if (l < r) {
-					var i = l, j = r, x = zData[l];
+					var i = l, j = r, x = a[l];
 					while (i < j) {
-						while (i < j && zData[j].z <= x.z) {
+						while (i < j && a[j].z <= x.z) {
 							j--;
 						}
 						if (i < j) {
-							zData[i++] = zData[j];
+							a[i++] = a[j];
 						}
-						while(i < j && zData[i].z > x.z) {
+						while(i < j && a[i].z > x.z) {
 							i++;
 						}  
 						if(i < j) {
-							zData[j--] = zData[i];
+							a[j--] = a[i];
 						}
 					}
-					zData[i] = x;
-					sort(l, i - 1);
-					sort(i + 1, r);
+					a[i] = x;
+					sort(a, l, i - 1);
+					sort(a, i + 1, r);
 				}
 			}
 			function drawAll() {
-				sort(0, zData.length - 1);
-				for (var i = 0; i < zData.length; i++) {
+				sort(zData, 0, zLen - 1);
+				for (var i = 0; i < zLen; i++) {
 					ctx.fillStyle = zData[i].color.getColorHex();
 					ctx.globalAlpha = zData[i].color.a;
+					if (!zData[i].color.m) {
+						var cx = (zData[i].x1 + zData[i].x2 + zData[i].x3) / 3;
+						var cy = (zData[i].y1 + zData[i].y2 + zData[i].y3) / 3;
+						var cz = (zData[i].z1 + zData[i].z2 + zData[i].z3) / 3;
+						var s = minTrg / 4;
+						ctx.fillRect(cx - s, cy - s, s * 2, s * 2);
+						continue;
+					}
 					ctx.beginPath();
 					ctx.moveTo(zData[i].x1, zData[i].y1);
 					ctx.lineTo(zData[i].x2, zData[i].y2);
 					ctx.lineTo(zData[i].x3, zData[i].y3);
 					ctx.closePath();
 					ctx.fill();
+					if (zData[i].color.line) ctx.stroke();
 				}
 			}
 			function toHex(n, len) {
@@ -188,20 +206,75 @@
 				var l;
 				l = Math.sqrt(Math.pow(np.y - cp.y, 2) + Math.pow(np.z - cp.z, 2));
 				rx += Math.atan2(np.y - cp.y, np.z - cp.z);
-				np.y = cp.y + Math.cos(rx) * l;
-				np.z = cp.z + Math.sin(rx) * l;
+				np.y = cp.y + Math.sin(rx) * l;
+				np.z = cp.z + Math.cos(rx) * l;
 				
 				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.z - cp.z, 2));
 				ry += Math.atan2(np.x - cp.x, np.z - cp.z);
-				np.x = cp.x + Math.cos(ry) * l;
-				np.z = cp.z + Math.sin(ry) * l;
+				np.x = cp.x + Math.sin(ry) * l;
+				np.z = cp.z + Math.cos(ry) * l;
 				
 				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.y - cp.y, 2));
 				rz += Math.atan2(np.x - cp.x, np.y - cp.y);
-				np.x = cp.x + Math.cos(rz) * l;
-				np.y = cp.y + Math.sin(rz) * l;
+				np.x = cp.x + Math.sin(rz) * l;
+				np.y = cp.y + Math.cos(rz) * l;
 				
 				return np;
+			}
+			function createCube(x, y, z, rx, ry, rz, sx, sy, sz, colors) {
+				var t;
+				var hsx = sx / 2, hsy = sy / 2, hsz = sz / 2;
+				var p1 = rotation(new Point3D(x - hsx, y - hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p2 = rotation(new Point3D(x - hsx, y + hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p3 = rotation(new Point3D(x + hsx, y + hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p4 = rotation(new Point3D(x + hsx, y - hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p5 = rotation(new Point3D(x - hsx, y - hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p6 = rotation(new Point3D(x - hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p7 = rotation(new Point3D(x + hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p8 = rotation(new Point3D(x + hsx, y - hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
+				
+				gcolor = colors[0];
+				t = new Trg(p1, p2, p5);
+				drawTrg(t);
+				t = new Trg(p2, p6, p5);
+				drawTrg(t);
+				// 
+				
+				gcolor = colors[1];
+				t = new Trg(p2, p6, p7);
+				drawTrg(t);
+				t = new Trg(p2, p7, p3);
+				drawTrg(t);
+				// 
+				
+				gcolor = colors[2];
+				t = new Trg(p3, p7, p8);
+				drawTrg(t);
+				t = new Trg(p4, p3, p8);
+				drawTrg(t);
+				// 
+				
+				gcolor = colors[3];
+				t = new Trg(p1, p4, p8);
+				drawTrg(t);
+				t = new Trg(p5, p8, p1);
+				drawTrg(t);
+				// 
+				
+				gcolor = colors[4];
+				t = new Trg(p1, p2, p3);
+				drawTrg(t);
+				t = new Trg(p3, p4, p1);
+				drawTrg(t);
+				//
+				
+				gcolor = colors[5];
+				t = new Trg(p5, p6, p7);
+				drawTrg(t);
+				t = new Trg(p5, p7, p8);
+				drawTrg(t);
+				//
+				
 			}
 		</script>
 	</head>
@@ -212,63 +285,36 @@
 			document.body.appendChild(canvas);
 			var ww = 0.2, vv = 0, kk = 0;
 			
+			
+			
 			function update() {
 				clear();
-				var p1 = rotation(new Point3D(200, 200, 800), new Point3D(300, 300, 700), ww, vv, kk);
-				var p2 = rotation(new Point3D(200, 400, 800), new Point3D(300, 300, 700), ww, vv, kk);
-				var p3 = rotation(new Point3D(400, 400, 800), new Point3D(300, 300, 700), ww, vv, kk);
-				var p4 = rotation(new Point3D(400, 200, 800), new Point3D(300, 300, 700), ww, vv, kk);
-				var p5 = rotation(new Point3D(200, 200, 600), new Point3D(300, 300, 700), ww, vv, kk);
-				var p6 = rotation(new Point3D(200, 400, 600), new Point3D(300, 300, 700), ww, vv, kk);
-				var p7 = rotation(new Point3D(400, 400, 600), new Point3D(300, 300, 700), ww, vv, kk);
-				var p8 = rotation(new Point3D(400, 200, 600), new Point3D(300, 300, 700), ww, vv, kk);
-				var t;
 				
 				ww += 0.01;
 				vv += 0.02;
 				kk += 0.03;
 				
-				gcolor = new Color(253, 25, 255, 0.7);
-				t = new Trg(p1, p2, p5);
-				drawTrg(t);
-				t = new Trg(p2, p6, p5);
-				drawTrg(t);
-				// 
-				
-				gcolor = new Color(23, 255, 255, 0.7);
-				t = new Trg(p2, p6, p7);
-				drawTrg(t);
-				t = new Trg(p2, p7, p3);
-				drawTrg(t);
-				// 
-				
-				gcolor = new Color(23, 25, 255, 0.7);
-				t = new Trg(p3, p7, p8);
-				drawTrg(t);
-				t = new Trg(p4, p3, p8);
-				drawTrg(t);
-				// 
-				
-				gcolor = new Color(223, 25, 25, 0.7);
-				t = new Trg(p1, p4, p8);
-				drawTrg(t);
-				t = new Trg(p5, p8, p1);
-				drawTrg(t);
-				// 
-				
-				gcolor = new Color(213, 225, 25, 0.7);
-				t = new Trg(p1, p2, p3);
-				drawTrg(t);
-				t = new Trg(p3, p4, p1);
-				drawTrg(t);
-				//
-				
-				gcolor = new Color(213, 225, 25, 0.7);
-				t = new Trg(p5, p6, p7);
-				drawTrg(t);
-				t = new Trg(p5, p7, p8);
-				drawTrg(t);
-				//
+				createCube(300, 300, 500, ww, vv, kk, 100, 100, 100, 
+					[new Color(255, 0, 0, 0.8, true, false), 
+					new Color(0, 255, 0, 0.8, true, false), 
+					new Color(0, 0, 255, 0.8, true, false),
+					new Color(255, 255, 0, 0.8, true, false),
+					new Color(0, 255, 255, 0.8, true, false),
+					new Color(255, 0, 255, 0.8, true, false)]);
+				createCube(200, 300, 500, -ww, vv / 2, -kk / 2, 100, 100, 100,
+					[new Color(255, 0, 0, 0.8, false, false), 
+					new Color(0, 255, 0, 0.8, false, false), 
+					new Color(0, 0, 255, 0.8, false, false),
+					new Color(255, 255, 0, 0.8, false, false),
+					new Color(0, 255, 255, 0.8, false, false),
+					new Color(255, 0, 255, 0.8, false, false)]);
+				createCube(400, 300, 500, -ww / 2, -vv, kk * 2, 100, 100, 100,
+					[new Color(255, 0, 0, 0.8, true, true), 
+					new Color(0, 255, 0, 0.8, true, true), 
+					new Color(0, 0, 255, 0.8, true, true),
+					new Color(255, 255, 0, 0.8, true, true),
+					new Color(0, 255, 255, 0.8, true, true),
+					new Color(255, 0, 255, 0.8, true, true)]);
 				
 				
 				drawAll();
