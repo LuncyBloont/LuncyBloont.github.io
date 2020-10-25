@@ -167,25 +167,25 @@
                     space = parseInt(goodSize * 100 + bugHart * 5 - bugHart * ssize) / 100,
                     5 > ssize && (ssize = 5),
                     3 > size && (size = 3);
-                    var e = Math.sqrt(Math.pow(gx - x, 2) + Math.pow(gy - y, 2));
-                    x += (gx - x) * speed / e,
-                    y += (gy - y) * speed / e;
+                    exe = Math.sqrt(Math.pow(gx - x, 2) + Math.pow(gy - y, 2));
+                    x += (gx - x) * speed / exe,
+                    y += (gy - y) * speed / exe;
                     var s = Math.sqrt(Math.pow(gx - tx, 2) + Math.pow(gy - ty, 2));
                     gx -= (gx - tx) * speed * (1 + s / 500) / s,
                     gy -= (gy - ty) * speed * (1 + s / 500) / s;
                     var a = Math.sqrt(Math.pow(x - tx, 2) + Math.pow(y - ty, 2));
                     for (ssize + 30 > a && (gsize -= 9.6), 
 						Math.random() > .23 && (
-							gx -= (x - gx) * Math.sin(oke) * 2 / e, 
-							gy -= (y - gy) * Math.sin(oke) * 2 / e
+							gx -= (x - gx) * Math.sin(oke) * 2 / exe, 
+							gy -= (y - gy) * Math.sin(oke) * 2 / exe
 						), 
 						speed = 5 + ssize / 2, 
 						4 >= gsize && (
 							tx = winWidth / 2 + winWidth / 2 * Math.random(), 
 							ty = winHeight * Math.random(), 
 							tl = 400 + 400 * Math.random(), 
-							gx -= (x - gx) * tl / e, 
-							gy -= (y - gy) * tl / e, 
+							gx -= (x - gx) * tl / exe, 
+							gy -= (y - gy) * tl / exe, 
 							tcolor = "rgb(" + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + "," + parseInt(250 * Math.random()) + ")", 
 							gsize = 0, 
 							space > 0 && (size += 2)
@@ -302,16 +302,13 @@
                     ctx.lineWidth = 0.2 + Math.abs(Math.sin(oke) * 2),
                     ctx.stroke();                                                                                                                                                                                                                                                                                                                                                                                  
 					var hited = false;
-					var jj = 0;
-					for (var jj = 0; jj < size; jj += size / 5) {
-						var a = Math.sqrt(Math.pow(guns[i].x - px[jj], 2) + Math.pow(guns[i].y - py[jj], 2)),
-						o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed,
-						c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed,
-						n = Math.sqrt(Math.pow(o - px[jj], 2) + Math.pow(c - py[jj], 2));
-						if (ssize * 2 > n && a < bulletSpeed * bulletLength) {
-							hited = true;
-							break;
-						}
+					var a = Math.sqrt(Math.pow(guns[i].x - px[jj], 2) + Math.pow(guns[i].y - py[jj], 2)),
+					o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed,
+					c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed,
+					n = Math.sqrt(Math.pow(o - px[jj], 2) + Math.pow(c - py[jj], 2));
+					if (ssize * 2 > n && a < bulletSpeed * bulletLength) {
+						hited = true;
+						break;
 					}
                     if (hited) {
 						score += 1;
@@ -547,8 +544,9 @@
             gi = 0,
             uptt = 0,
             bldid = 0;
+			var exe;
             
-			var helpStr = "请输入你的姓名, 开始前请确保横屏游戏";
+			var helpStr = "请输入你的姓名, 开始前请确保横屏游戏：";
             var times = 0;
 			var bulletSpeed = 8;
 			var goodSize = 24;
@@ -563,7 +561,7 @@
 			var torSpeed = 0.03;
 			var aimed = true;
 			var bulletCount = 3;
-			var inname = prompt("规则：点击引导三连机弩瞄准，瞄准后点击射击，在命脉被吃完前迎来援军即可胜利。",
+			var inname = prompt("规则：点击引导三连机弩瞄准，瞄准后点击射击，在命脉被吃完前迎来援军即可胜利。" +
 				helpStr);
 			if (inname != helpStr && inname != "") name = inname;
 			start();run(),this.outerHTML='';
