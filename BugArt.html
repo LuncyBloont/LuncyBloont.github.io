@@ -285,7 +285,7 @@
 				}
                 for (bldid >= 25 && (bldid = 0), 
 						i = 0; 
-						i < guns.length; i++) try {
+						i < guns.length; i++){ try {
                     var t = guns[i].x - guns[i].tx,
                     e = guns[i].y - guns[i].ty,
                     s = Math.sqrt(t * t + e * e);
@@ -302,13 +302,13 @@
                     ctx.lineWidth = 0.2 + Math.abs(Math.sin(oke) * 2),
                     ctx.stroke();                                                                                                                                                                                                                                                                                                                                                                                  
 					var hited = false;
-					var a = Math.sqrt(Math.pow(guns[i].x - px[jj], 2) + Math.pow(guns[i].y - py[jj], 2)),
-					o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed,
-					c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed,
-					n = Math.sqrt(Math.pow(o - px[jj], 2) + Math.pow(c - py[jj], 2));
-					if (ssize * 2 > n && a < bulletSpeed * bulletLength) {
+					var a = Math.sqrt(Math.pow(guns[i].x - x, 2) + Math.pow(guns[i].y - y, 2));
+					o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed;
+					c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed;
+					n = Math.sqrt(Math.pow(o - x, 2) + Math.pow(c - y, 2));
+					if (ssize * 5 > n && a < bulletSpeed * bulletLength) {
 						hited = true;
-						break;
+						// break;
 					}
                     if (hited) {
 						score += 1;
@@ -349,7 +349,7 @@
                     }
                 } catch(h) {
                     ctx.strokeText(h, 16, 46)
-                }
+                }}
 				fire = false;
                 ssize = size,
                 rok += .8;
