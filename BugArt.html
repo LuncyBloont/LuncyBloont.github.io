@@ -306,7 +306,7 @@
 					o = guns[i].x + (guns[i].ox - guns[i].x) * a / bulletSpeed;
 					c = guns[i].y + (guns[i].oy - guns[i].y) * a / bulletSpeed;
 					n = Math.sqrt(Math.pow(o - x, 2) + Math.pow(c - y, 2));
-					if (ssize * 5 > n && a < bulletSpeed * bulletLength) {
+					if (ssize * 3.5 > n && a < bulletSpeed * bulletLength) {
 						hited = true;
 						// break;
 					}
