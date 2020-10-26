@@ -2,15 +2,21 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title></title>
+		<title>抽奖</title>
 	</head>
 	<body>
+		<button onclick="doit(event);">开始</button>
+		<p id="panel">三个数字代表三个色子的点数。</p>
 		<script>
-			document.write(
-				"Num0: " + parseInt(Math.random() * 5.999 + 1) + "<br />" +
-				"Num1: " + parseInt(Math.random() * 5.999 + 1) + "<br />" +
-				"Num2: " + parseInt(Math.random() * 5.999 + 1) + "<br />"
-			);
+			function doit(event) {
+				var obj=event.srcElement ? event.srcElement : event.target;
+				document.getElementById("panel").innerHTML = (
+					"Num0: " + parseInt(Math.random() * 5.999 + 1) + "<br />" +
+					"Num1: " + parseInt(Math.random() * 5.999 + 1) + "<br />" +
+					"Num2: " + parseInt(Math.random() * 5.999 + 1) + "<br />"
+				);
+				obj.innerHTML = "再来一次";
+			}
 		</script>
 	</body>
 </html>
