@@ -7,7 +7,10 @@
 			// Define
 			var minTrg = 15; //at least 5;
 			var gcolor = new Color(0, 0, 0, 1);
-			var sky = new Color(255, 255, 255, 1);
+			var sky = new Color(48, 48, 48, 1);
+			var sun = new Point3D(-0.5, 1, 0.2);
+			var sunForce = 0.8;
+			var sunColor = new Color(255, 250, 194);
 			var canvas;
 			var ctx;
 			var zData;
@@ -32,30 +35,47 @@
 				this.b = b;
 				this.a = a;
 				this.m = m;
+				this.move = 1;
 				this.line = line;
 				this.getColorHex = function() {
-					return "#" + toHex(this.r, 2) + toHex(this.g, 2) + toHex(this.b, 2);
+					var cc = this.move > 1 ? this.getLighterColor(this.move - 1) : 
+					this.getDarkerColor(1 - (sky.r + sky.g + sky.b) / 3 / 255);
+					return "#" + toHex(cc.r, 2) + toHex(cc.g, 2) + toHex(cc.b, 2);
 				}
 				this.getColorRGB = function() {
-					return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
+					var cc = this.move > 1 ? this.getLighterColor(this.move - 1) : 
+					this.getDarkerColor(1 - (sky.r + sky.g + sky.b) / 3 / 255);
+					return "rgb(" + cc.r + ", " + cc.g + ", " + cc.b + ")";
 				}
 				this.getDarkerColor = function(dark) {
-					return new Color(parseInt(this.r * dark), parseInt(this.g * dark),
-						parseInt(this.b * dark), this.a, this.m, this.line);
+					var nr = parseInt(this.r * (1 - dark) + sky.r * dark);
+					var ng = parseInt(this.g * (1 - dark) + sky.g * dark);
+					var nb = parseInt(this.b * (1 - dark) + sky.b * dark);
+					nr = nr < 0 ? 0 : nr;
+					nb = nb < 0 ? 0 : nb;
+					ng = ng < 0 ? 0 : ng;
+					return new Color(nr > 255 ? 255 : parseInt(nr), ng > 255 ? 255 : parseInt(ng), nb > 255 ? 255 : parseInt(nb),
+							this.a, this.m, this.line);
 				}
 				this.getLighterColor = function(light) {
-					var nr = parseInt(this.r * light);
-					var ng = parseInt(this.g * light);
-					var nb = parseInt(this.b * light);
-					return new Color(nr > 255 ? 255 : nr, ng > 255 ? 255 : ng, nb > 255 ? 255 : nb,
-						this.a, this.m, this.line);
+					var cc = this.getDarkerColor(1 - (sky.r + sky.g + sky.b) / 3 / 255 - light);
+					var nr = parseInt(cc.r * (1 - light) + sunColor.r * light);
+					var ng = parseInt(cc.g * (1 - light) + sunColor.g * light);
+					var nb = parseInt(cc.b * (1 - light) + sunColor.b * light);
+					nr = nr < 0 ? 0 : nr;
+					nb = nb < 0 ? 0 : nb;
+					ng = ng < 0 ? 0 : ng;
+					return new Color(nr > 255 ? 255 : parseInt(nr), ng > 255 ? 255 : parseInt(ng), nb > 255 ? 255 : parseInt(nb),
+							this.a, this.m, this.line);
 				}
 				this.getAlphaColor = function(alp) {
 					var na = this.a * alp;
 					return new Color(this.r, this.g, this.b, na > 1 ? 1 : na, this.m, this.line);
 				}
 				this.clone = function() {
-					return new Color(this.r, this.g, this.b, this.a, this.m, this.line);
+					var cc = new Color(this.r, this.g, this.b, this.a, this.m, this.line);
+					cc.move = this.move;
+					return cc;
 				}
 			}
 			function Point2D(x, y, z) {
@@ -101,11 +121,11 @@
 					ax ay az
 					bx by bz
 
-					ay az x - by az x
+					ay bz x - by az x
 					bx az y - ax bz y
 					ax by z - ay bx z
 					*/
-					var normal = new Point2D(ay * az - by * az, bx * az - ax * bz, ax * by - ay * bx);
+					var normal = new Point2D(ay * bz - by * az, bx * az - ax * bz, ax * by - ay * bx);
 					return normal;
 				}
 			}
@@ -208,7 +228,10 @@
 			function drawTrg(trg, first = true) {
 				var trg2D = new Trg(trg.a.get2D(), trg.b.get2D(), trg.c.get2D());
 				if (first) {
-					var normal = trg2D.getNormal();
+					var normal = trg2D.getNormal(), normal3 = trg.getNormal();
+					gcolor.move = (1 + sunForce * (normal3.x * -sun.x + normal3.y * -sun.y + normal3.z * -sun.z) / 
+							distance3(new Point3D(0, 0, 0), sun) / 
+							distance3(new Point3D(0, 0, 0), normal3));
 					if (normal.z >= 0) {
 						return;
 					}
@@ -310,6 +333,7 @@
 			document.body.appendChild(canvas);
 			var ww = 0.2, vv = 0, kk = 0;
 
+			var ox = 100, or = 0, oz = 0;
 
 
 			function update() {
@@ -318,28 +342,34 @@
 				ww += 0.01;
 				vv += 0.02;
 				kk += 0.03;
-
-				createCube(300, 300, 500, ww, vv, kk, 100, 100, 100,
-					[new Color(255, 0, 0, 0.8, true, false),
-					new Color(0, 255, 0, 0.8, true, false),
-					new Color(0, 0, 255, 0.8, true, false),
-					new Color(255, 255, 0, 0.8, true, false),
-					new Color(0, 255, 255, 0.8, true, false),
-					new Color(255, 0, 255, 0.8, true, false)]);
-				createCube(200, 300, 500, -ww, vv / 2, -kk / 2, 100, 100, 100,
-					[new Color(255, 0, 0, 0.8, false, false),
-					new Color(0, 255, 0, 0.8, false, false),
-					new Color(0, 0, 255, 0.8, false, false),
-					new Color(255, 255, 0, 0.8, false, false),
-					new Color(0, 255, 255, 0.8, false, false),
-					new Color(255, 0, 255, 0.8, false, false)]);
-				createCube(400, 300, 500, -ww / 2, -vv, kk * 2, 100, 100, 100,
-					[new Color(255, 0, 0, 0.8, true, true),
-					new Color(0, 255, 0, 0.8, true, true),
-					new Color(0, 0, 255, 0.8, true, true),
-					new Color(255, 255, 0, 0.8, true, true),
-					new Color(0, 255, 255, 0.8, true, true),
-					new Color(255, 0, 255, 0.8, true, true)]);
+				or += 0.02;
+				createCube(300 + Math.cos(Math.atan2(oz, ox) - Math.PI / 1.5 + or) * 100 * Math.sin(or),
+						300 + 50 * Math.sin(or), 500 + Math.sin(Math.atan2(oz, ox) - Math.PI / 1.5 + or) * 100 * Math.sin(or), 
+						ww, vv, kk, 100, 100, 100,
+						[new Color(255, 0, 0, 0.8),
+						new Color(0, 255, 0, 0.8),
+						new Color(0, 0, 255, 0.8),
+						new Color(255, 255, 0, 0.8),
+						new Color(0, 255, 255, 0.8),
+						new Color(255, 0, 255, 0.8)]);
+				createCube(300 + Math.cos(Math.atan2(oz, ox) + or) * 100 * Math.sin(or), 
+						300 + 50 * Math.sin(or - Math.PI / 1.5), 500 + Math.sin(Math.atan2(oz, ox) + or) * 100 * Math.sin(or), 
+						-ww, vv / 2, -kk / 2, 100, 100, 100,
+						[new Color(255, 0, 0, 0.8),
+						new Color(0, 255, 0, 0.8),
+						new Color(0, 0, 255, 0.8),
+						new Color(255, 255, 0, 0.8),
+						new Color(0, 255, 255, 0.8),
+						new Color(255, 0, 255, 0.8)]);
+				createCube(300 + Math.cos(Math.atan2(oz, ox) + Math.PI / 1.5 + or) * 100 * Math.sin(or), 
+						300 + 50 * Math.sin(or + Math.PI / 1.5), 500 + Math.sin(Math.atan2(oz, ox) + Math.PI / 1.5 + or) * 100 * Math.sin(or), 
+						-ww / 2, -vv, kk * 2, 100, 100, 100,
+						[new Color(255, 0, 0, 0.8),
+						new Color(0, 255, 0, 0.8),
+						new Color(0, 0, 255, 0.8),
+						new Color(255, 255, 0, 0.8),
+						new Color(0, 255, 255, 0.8),
+						new Color(255, 0, 255, 0.8)]);
 
 				
 
