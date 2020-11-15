@@ -14,7 +14,7 @@
 			var zLen = 0, zMax = 10000;
 			var focus;
 			var winWidth, winHeight;
-			
+
 			// Class
 			function DrawAble(x1, y1, x2, y2, x3, y3, z, c) {
 				this.x1 = x1;
@@ -72,7 +72,7 @@
 				this.z = z;
 				this.get2D = function() {
 					var cx = winWidth / 2, cy = winHeight / 2;
-					var res = new Point3D(cx + (this.x - cx) * focus / this.z, 
+					var res = new Point3D(cx + (this.x - cx) * focus / this.z,
 						cy + (this.y - cy) * focus / this.z, this.z);
 					var nz = distance3(new Point3D(cx, cy, 0), res);
 					res.z = nz;
@@ -90,7 +90,7 @@
 					return new Trg(this.a, this.b, this.c);
 				}
 			}
-			
+
 			// Function
 			function CreateCanvas(width, height) {
 				winWidth = width;
@@ -134,7 +134,7 @@
 						}
 						while(i < j && a[i].z > x.z) {
 							i++;
-						}  
+						}
 						if(i < j) {
 							a[j--] = a[i];
 						}
@@ -181,7 +181,7 @@
 			}
 			function isTrgSubable(trg) {
 				if (trg.a.z < focus || trg.b.z < focus || trg.c.z < focus) return false;
-				if (distance2(trg.a, trg.b) > minTrg || 
+				if (distance2(trg.a, trg.b) > minTrg ||
 				distance2(trg.b, trg.c) > minTrg ||
 				distance2(trg.c, trg.a) > minTrg) return true;
 				return false;
@@ -208,17 +208,17 @@
 				rx += Math.atan2(np.y - cp.y, np.z - cp.z);
 				np.y = cp.y + Math.sin(rx) * l;
 				np.z = cp.z + Math.cos(rx) * l;
-				
+
 				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.z - cp.z, 2));
 				ry += Math.atan2(np.x - cp.x, np.z - cp.z);
 				np.x = cp.x + Math.sin(ry) * l;
 				np.z = cp.z + Math.cos(ry) * l;
-				
+
 				l = Math.sqrt(Math.pow(np.x - cp.x, 2) + Math.pow(np.y - cp.y, 2));
 				rz += Math.atan2(np.x - cp.x, np.y - cp.y);
 				np.x = cp.x + Math.sin(rz) * l;
 				np.y = cp.y + Math.cos(rz) * l;
-				
+
 				return np;
 			}
 			function createCube(x, y, z, rx, ry, rz, sx, sy, sz, colors) {
@@ -232,49 +232,49 @@
 				var p6 = rotation(new Point3D(x - hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
 				var p7 = rotation(new Point3D(x + hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
 				var p8 = rotation(new Point3D(x + hsx, y - hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
-				
+
 				gcolor = colors[0];
 				t = new Trg(p1, p2, p5);
 				drawTrg(t);
 				t = new Trg(p2, p6, p5);
 				drawTrg(t);
-				// 
-				
+				//
+
 				gcolor = colors[1];
 				t = new Trg(p2, p6, p7);
 				drawTrg(t);
 				t = new Trg(p2, p7, p3);
 				drawTrg(t);
-				// 
-				
+				//
+
 				gcolor = colors[2];
 				t = new Trg(p3, p7, p8);
 				drawTrg(t);
 				t = new Trg(p4, p3, p8);
 				drawTrg(t);
-				// 
-				
+				//
+
 				gcolor = colors[3];
 				t = new Trg(p1, p4, p8);
 				drawTrg(t);
 				t = new Trg(p5, p8, p1);
 				drawTrg(t);
-				// 
-				
+				//
+
 				gcolor = colors[4];
 				t = new Trg(p1, p2, p3);
 				drawTrg(t);
 				t = new Trg(p3, p4, p1);
 				drawTrg(t);
 				//
-				
+
 				gcolor = colors[5];
 				t = new Trg(p5, p6, p7);
 				drawTrg(t);
 				t = new Trg(p5, p7, p8);
 				drawTrg(t);
 				//
-				
+
 			}
 		</script>
 	</head>
@@ -284,52 +284,54 @@
 			canvas.style.width = "60%";
 			document.body.appendChild(canvas);
 			var ww = 0.2, vv = 0, kk = 0;
-			
-			
-			
+
+
+
 			function update() {
 				clear();
-				
+
 				ww += 0.01;
 				vv += 0.02;
 				kk += 0.03;
-				
-				createCube(300, 300, 500, ww, vv, kk, 100, 100, 100, 
-					[new Color(255, 0, 0, 0.8, true, false), 
-					new Color(0, 255, 0, 0.8, true, false), 
+
+				createCube(300, 300, 500, ww, vv, kk, 100, 100, 100,
+					[new Color(255, 0, 0, 0.8, true, false),
+					new Color(0, 255, 0, 0.8, true, false),
 					new Color(0, 0, 255, 0.8, true, false),
 					new Color(255, 255, 0, 0.8, true, false),
 					new Color(0, 255, 255, 0.8, true, false),
 					new Color(255, 0, 255, 0.8, true, false)]);
 				createCube(200, 300, 500, -ww, vv / 2, -kk / 2, 100, 100, 100,
-					[new Color(255, 0, 0, 0.8, false, false), 
-					new Color(0, 255, 0, 0.8, false, false), 
+					[new Color(255, 0, 0, 0.8, false, false),
+					new Color(0, 255, 0, 0.8, false, false),
 					new Color(0, 0, 255, 0.8, false, false),
 					new Color(255, 255, 0, 0.8, false, false),
 					new Color(0, 255, 255, 0.8, false, false),
 					new Color(255, 0, 255, 0.8, false, false)]);
 				createCube(400, 300, 500, -ww / 2, -vv, kk * 2, 100, 100, 100,
-					[new Color(255, 0, 0, 0.8, true, true), 
-					new Color(0, 255, 0, 0.8, true, true), 
+					[new Color(255, 0, 0, 0.8, true, true),
+					new Color(0, 255, 0, 0.8, true, true),
 					new Color(0, 0, 255, 0.8, true, true),
 					new Color(255, 255, 0, 0.8, true, true),
 					new Color(0, 255, 255, 0.8, true, true),
 					new Color(255, 0, 255, 0.8, true, true)]);
+
 				
-				
+
+
 				drawAll();
 			}
-			
+
 			setInterval(update, 30);
-			
-			
+
+
 			// Test
 			/*var color = new Color(55, 155, 205, 0.3);
 			alert(color.getColorHex());
 			alert(color.getLighterColor(2).getColorRGB());
 			alert(color.getAlphaColor(2).a);
 			alert(color.getAlphaColor(2).getAlphaColor(2).a);*/
-			
+
 		</script>
 	</body>
 </html>
