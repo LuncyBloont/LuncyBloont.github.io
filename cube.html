@@ -89,6 +89,25 @@
 				this.clone = function() {
 					return new Trg(this.a, this.b, this.c);
 				}
+				this.getNormal = function() {
+					var ax = a.x - c.x;
+					var ay = a.y - c.y;
+					var az = a.z - c.z;
+					var bx = b.x - c.x;
+					var by = b.y - c.y;
+					var bz = b.z - c.z;
+					/*
+					x  y  z
+					ax ay az
+					bx by bz
+
+					ay az x - by az x
+					bx az y - ax bz y
+					ax by z - ay bx z
+					*/
+					var normal = new Point2D(ay * az - by * az, bx * az - ax * bz, ax * by - ay * bx);
+					return normal;
+				}
 			}
 
 			// Function
@@ -186,8 +205,14 @@
 				distance2(trg.c, trg.a) > minTrg) return true;
 				return false;
 			}
-			function drawTrg(trg) {
+			function drawTrg(trg, first = true) {
 				var trg2D = new Trg(trg.a.get2D(), trg.b.get2D(), trg.c.get2D());
+				if (first) {
+					var normal = trg2D.getNormal();
+					if (normal.z >= 0) {
+						return;
+					}
+				}
 				if (!isTrgSubable(trg2D)) {
 					putMinTrg(trg2D);
 					return;
@@ -195,10 +220,10 @@
 				var p1 = new Point3D((trg.a.x + trg.b.x) / 2, (trg.a.y + trg.b.y) / 2, (trg.a.z + trg.b.z) / 2);
 				var p2 = new Point3D((trg.b.x + trg.c.x) / 2, (trg.b.y + trg.c.y) / 2, (trg.b.z + trg.c.z) / 2);
 				var p3 = new Point3D((trg.c.x + trg.a.x) / 2, (trg.c.y + trg.a.y) / 2, (trg.c.z + trg.a.z) / 2);
-				drawTrg(new Trg(trg.a, p1, p3));
-				drawTrg(new Trg(p1, trg.b, p2));
-				drawTrg(new Trg(p2, trg.c, p3));
-				drawTrg(new Trg(p1, p2, p3));
+				drawTrg(new Trg(trg.a, p1, p3), false);
+				drawTrg(new Trg(p1, trg.b, p2), false);
+				drawTrg(new Trg(p2, trg.c, p3), false);
+				drawTrg(new Trg(p1, p2, p3), false);
 			}
 			function rotation(p, cp, rx, ry, rz) {
 				var np = p.clone();
@@ -225,18 +250,18 @@
 				var t;
 				var hsx = sx / 2, hsy = sy / 2, hsz = sz / 2;
 				var p1 = rotation(new Point3D(x - hsx, y - hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
-				var p2 = rotation(new Point3D(x - hsx, y + hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p2 = rotation(new Point3D(x + hsx, y - hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
 				var p3 = rotation(new Point3D(x + hsx, y + hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
-				var p4 = rotation(new Point3D(x + hsx, y - hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p4 = rotation(new Point3D(x - hsx, y + hsy, z + hsz), new Point3D(x, y, z), rx, ry, rz);
 				var p5 = rotation(new Point3D(x - hsx, y - hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
-				var p6 = rotation(new Point3D(x - hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p6 = rotation(new Point3D(x + hsx, y - hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
 				var p7 = rotation(new Point3D(x + hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
-				var p8 = rotation(new Point3D(x + hsx, y - hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
+				var p8 = rotation(new Point3D(x - hsx, y + hsy, z - hsz), new Point3D(x, y, z), rx, ry, rz);
 
 				gcolor = colors[0];
-				t = new Trg(p1, p2, p5);
+				t = new Trg(p1, p5, p2);
 				drawTrg(t);
-				t = new Trg(p2, p6, p5);
+				t = new Trg(p2, p5, p6);
 				drawTrg(t);
 				//
 
@@ -257,7 +282,7 @@
 				gcolor = colors[3];
 				t = new Trg(p1, p4, p8);
 				drawTrg(t);
-				t = new Trg(p5, p8, p1);
+				t = new Trg(p5, p1, p8);
 				drawTrg(t);
 				//
 
@@ -269,9 +294,9 @@
 				//
 
 				gcolor = colors[5];
-				t = new Trg(p5, p6, p7);
+				t = new Trg(p5, p7, p6);
 				drawTrg(t);
-				t = new Trg(p5, p7, p8);
+				t = new Trg(p5, p8, p7);
 				drawTrg(t);
 				//
 
