@@ -7,7 +7,7 @@
 			// Define
 			var minTrg = 15; //at least 5;
 			var gcolor = new Color(0, 0, 0, 1);
-			var sky = new Color(48, 48, 48, 1);
+			var sky = new Color(48, 88, 98, 0.5);
 			var sun = new Point3D(-0.5, 1, 0.2);
 			var sunForce = 0.8;
 			var sunColor = new Color(255, 250, 194);
@@ -54,7 +54,8 @@
 					nr = nr < 0 ? 0 : nr;
 					nb = nb < 0 ? 0 : nb;
 					ng = ng < 0 ? 0 : ng;
-					return new Color(nr > 255 ? 255 : parseInt(nr), ng > 255 ? 255 : parseInt(ng), nb > 255 ? 255 : parseInt(nb),
+					return new Color(nr > 255 ? 255 : parseInt(nr), ng > 255 ? 255 : 
+							parseInt(ng), nb > 255 ? 255 : parseInt(nb),
 							this.a, this.m, this.line);
 				}
 				this.getLighterColor = function(light) {
@@ -65,7 +66,8 @@
 					nr = nr < 0 ? 0 : nr;
 					nb = nb < 0 ? 0 : nb;
 					ng = ng < 0 ? 0 : ng;
-					return new Color(nr > 255 ? 255 : parseInt(nr), ng > 255 ? 255 : parseInt(ng), nb > 255 ? 255 : parseInt(nb),
+					return new Color(nr > 255 ? 255 : parseInt(nr), ng > 255 ? 255 : 
+							parseInt(ng), nb > 255 ? 255 : parseInt(nb),
 							this.a, this.m, this.line);
 				}
 				this.getAlphaColor = function(alp) {
@@ -146,8 +148,8 @@
 			}
 			function clear() {
 				ctx.fillStyle = sky.getColorRGB();
-				ctx.fillRect(0, 0, winWidth, winHeight);
 				ctx.globalAlpha = sky.a;
+				ctx.fillRect(0, 0, winWidth, winHeight);
 				zLen = 0;
 			}
 			function putMinTrg(trg) {
@@ -346,30 +348,30 @@
 				createCube(300 + Math.cos(Math.atan2(oz, ox) - Math.PI / 1.5 + or) * 100 * Math.sin(or),
 						300 + 50 * Math.sin(or), 500 + Math.sin(Math.atan2(oz, ox) - Math.PI / 1.5 + or) * 100 * Math.sin(or), 
 						ww, vv, kk, 100, 100, 100,
-						[new Color(255, 0, 0, 0.8),
-						new Color(0, 255, 0, 0.8),
-						new Color(0, 0, 255, 0.8),
-						new Color(255, 255, 0, 0.8),
-						new Color(0, 255, 255, 0.8),
-						new Color(255, 0, 255, 0.8)]);
+						[new Color(255, 255, 255, 1),
+						new Color(255, 255, 255, 1),
+						new Color(255, 255, 255, 1),
+						new Color(255, 255, 255, 1),
+						new Color(255, 255, 255, 1),
+						new Color(255, 255, 255, 1)]);
 				createCube(300 + Math.cos(Math.atan2(oz, ox) + or) * 100 * Math.sin(or), 
 						300 + 50 * Math.sin(or - Math.PI / 1.5), 500 + Math.sin(Math.atan2(oz, ox) + or) * 100 * Math.sin(or), 
 						-ww, vv / 2, -kk / 2, 100, 100, 100,
-						[new Color(255, 0, 0, 0.8),
-						new Color(0, 255, 0, 0.8),
-						new Color(0, 0, 255, 0.8),
-						new Color(255, 255, 0, 0.8),
-						new Color(0, 255, 255, 0.8),
-						new Color(255, 0, 255, 0.8)]);
+						[new Color(255, 0, 0, 1),
+						new Color(0, 255, 0, 1),
+						new Color(0, 0, 255, 1),
+						new Color(255, 255, 0, 1),
+						new Color(0, 255, 255, 1),
+						new Color(255, 0, 255, 1)]);
 				createCube(300 + Math.cos(Math.atan2(oz, ox) + Math.PI / 1.5 + or) * 100 * Math.sin(or), 
 						300 + 50 * Math.sin(or + Math.PI / 1.5), 500 + Math.sin(Math.atan2(oz, ox) + Math.PI / 1.5 + or) * 100 * Math.sin(or), 
 						-ww / 2, -vv, kk * 2, 100, 100, 100,
-						[new Color(255, 0, 0, 0.8),
-						new Color(0, 255, 0, 0.8),
-						new Color(0, 0, 255, 0.8),
-						new Color(255, 255, 0, 0.8),
-						new Color(0, 255, 255, 0.8),
-						new Color(255, 0, 255, 0.8)]);
+						[new Color(255, 0, 0, 0.2),
+						new Color(0, 255, 0, 0.2),
+						new Color(0, 0, 255, 0.2),
+						new Color(255, 255, 0, 0.2),
+						new Color(0, 255, 255, 0.2),
+						new Color(255, 0, 255, 0.2)]);
 
 				
 
