@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh_CN">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -82,6 +82,7 @@
 				var ttr = document.createElement("tr");
 				div.style.overflow = "scroll";
 				div.style.width = document.body.clientWidth + "px";
+				div.style.scrollbarWidth = "none";
 				tr.appendChild(td);
 				div.appendChild(ttb);
 				ttb.appendChild(ttr);
@@ -124,13 +125,17 @@
 	</head>
 	<body>
 		
-		<h1 align="center">HTML5 游戏站</h1>
-		<p align="center" class="tip">
+		<h1 style="text-align: center;">HTML5 游戏站</h1>
+		<p style="text-align: center;" class="tip">
 			请使用手机浏览器打开该页面
 		</p>
 		<div style="border: #454545 2px solid;width: 100%;"></div>
 		<br /><br />
 		<table style="width: 80%;margin: auto;" border="0" id="panel">
+			<caption>游戏列表</caption>
+			<tr>
+				<th scope="col">站内发布可联系：QQ 1831423997</th>
+			</tr>
 		</table>
 		<script>
 			setTimeout(startPage, 1500);
@@ -138,7 +143,10 @@
 		<style>
 			.item {
 				transition: transform 0.25s ease;float: left;
-				scrollbar-width: 0;
+				scrollbar-color: transparent transparent;
+				scrollbar-track-color: transparent;
+				-ms-scrollbar-track-color: transparent;
+				scrollbar-width: none;
 			}    
 			.item:hover {
 				transform: scale(1.1,1.1);
